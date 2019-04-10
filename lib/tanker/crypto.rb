@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 require 'rbnacl'
+require 'securerandom'
 
 module Tanker
   module Crypto
@@ -38,6 +39,19 @@ module Tanker
         private_key: signing_key.keypair_bytes,
         public_key: signing_key.verify_key.to_bytes
       }
+    end
+
+    def self.generate_encryption_keypair
+      encryption_key = RbNaCl::PrivateKey.generate
+
+      {
+        private_key: encryption_key.to_bytes,
+        public_key: encryption_key.public_key.to_bytes
+      }
+    end
+
+    def self.random_bytes(size)
+      SecureRandom.bytes(size)
     end
   end
 end
