@@ -1,4 +1,6 @@
 # frozen_string_literal: true
+require 'base64'
+
 RSpec.describe Tanker::Crypto do
   describe('generichash') do
     it 'should match the RFC7693 BLAKE2b-512 test vector for "abc"' do
@@ -10,6 +12,43 @@ RSpec.describe Tanker::Crypto do
       output = Tanker::Crypto.generichash(input, 64)
 
       expect(output).to eq(vector)
+    end
+  end
+
+  describe('signatures') do
+    before(:all) do
+      signature_keypair = Tanker::Crypto.generate_signature_keypair
+
+      @message = 'message'.dup.force_encoding(Encoding::ASCII_8BIT)
+      @public_key = signature_keypair[:public_key]
+      @signature = Tanker::Crypto.sign_detached(@message, signature_keypair[:private_key])
+    end
+
+    it 'should sign and verify using existing keypair' do
+      public_key = Base64.decode64(test_trustchain[:public_key])
+      private_key = Base64.decode64(test_trustchain[:private_key])
+      signature = Tanker::Crypto.sign_detached(@message, private_key)
+      Tanker::Crypto.verify_sign_detached(@message, signature, public_key)
+    end
+
+    it 'should verify a valid signature using a generated signature keypair' do
+      Tanker::Crypto.verify_sign_detached(@message, @signature, @public_key)
+    end
+
+    it 'should fail to verify an invalid message' do
+      invalid_message = corrupt_binary(@message)
+
+      expect {
+        Tanker::Crypto.verify_sign_detached(invalid_message, @signature, @public_key)
+      }.to raise_exception(Tanker::Crypto::InvalidSignature)
+    end
+
+    it 'should fail to verify an invalid signature' do
+      invalid_signature = corrupt_binary(@signature)
+
+      expect {
+        Tanker::Crypto.verify_sign_detached(@message, invalid_signature, @public_key)
+      }.to raise_exception(Tanker::Crypto::InvalidSignature)
     end
   end
 end
