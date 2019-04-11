@@ -49,5 +49,20 @@ module Tanker
         user_secret: Base64.strict_encode64(user_secret(hashed_user_id))
       })
     end
+
+    def self.create_provisional_identity(b64_trustchain_id, email)
+      encryption_keypair = Crypto.generate_encryption_keypair
+      signature_keypair = Crypto.generate_signature_keypair
+
+      serialize({
+        trustchain_id: b64_trustchain_id,
+        target: 'email',
+        value: email,
+        public_encryption_key: Base64.strict_encode64(encryption_keypair[:public_key]),
+        private_encryption_key: Base64.strict_encode64(encryption_keypair[:private_key]),
+        public_signature_key: Base64.strict_encode64(signature_keypair[:public_key]),
+        private_signature_key: Base64.strict_encode64(signature_keypair[:private_key])
+      })
+    end
   end
 end
