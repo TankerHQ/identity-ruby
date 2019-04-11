@@ -20,6 +20,14 @@ module Tanker
       random_bytes + check[0]
     end
 
+    def self.assert_string_values(hash)
+      hash.each_pair do |key, value|
+        unless value.is_a?(String)
+          raise TypeError.new("expected #{key} to be a String but was a #{value.class}")
+        end
+      end
+    end
+
     public
 
     def self.deserialize(b64_json)
@@ -31,6 +39,12 @@ module Tanker
     end
 
     def self.create_identity(b64_trustchain_id, b64_trustchain_private_key, user_id)
+      assert_string_values({
+        trustchain_id: b64_trustchain_id,
+        trustchain_private_key: b64_trustchain_private_key,
+        user_id: user_id
+      })
+
       trustchain_id = Base64.strict_decode64(b64_trustchain_id)
       trustchain_private_key = Base64.strict_decode64(b64_trustchain_private_key)
 
@@ -51,6 +65,11 @@ module Tanker
     end
 
     def self.create_provisional_identity(b64_trustchain_id, email)
+      assert_string_values({
+        trustchain_id: b64_trustchain_id,
+        email: email
+      })
+
       encryption_keypair = Crypto.generate_encryption_keypair
       signature_keypair = Crypto.generate_signature_keypair
 
@@ -66,6 +85,8 @@ module Tanker
     end
 
     def self.get_public_identity(serialized_identity)
+      assert_string_values({ identity: serialized_identity })
+
       identity = deserialize(serialized_identity)
 
       if identity['target'] == 'user'
@@ -83,6 +104,12 @@ module Tanker
     end
 
     def self.upgrade_user_token(b64_trustchain_id, user_id, user_token)
+      assert_string_values({
+        trustchain_id: b64_trustchain_id,
+        user_id: user_id,
+        user_token: user_token
+      })
+
       identity = deserialize(user_token)
       identity['target'] = 'user'
       identity['trustchain_id'] = b64_trustchain_id

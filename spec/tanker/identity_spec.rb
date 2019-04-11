@@ -47,6 +47,37 @@ RSpec.describe Tanker::Identity do
     end
   end
 
+  describe 'argument checking' do
+    before(:all) do
+      @not_string = 1234
+      @not_b64 = '&:,?'
+    end
+
+    def corrupt(arr, pos, value)
+      arr.dup.tap { |a| a[pos] = value }
+    end
+
+    it "raises if invalid argument when creating a permanent identity" do
+      args = [@trustchain[:id], @trustchain[:private_key], @user_id]
+      expect { Tanker::Identity.create_identity(*corrupt(args, 0, @not_string)) }.to raise_exception(TypeError)
+      expect { Tanker::Identity.create_identity(*corrupt(args, 1, @not_string)) }.to raise_exception(TypeError)
+      expect { Tanker::Identity.create_identity(*corrupt(args, 2, @not_string)) }.to raise_exception(TypeError)
+      expect { Tanker::Identity.create_identity(*corrupt(args, 0, @not_b64)) }.to raise_exception(ArgumentError)
+      expect { Tanker::Identity.create_identity(*corrupt(args, 1, @not_b64)) }.to raise_exception(ArgumentError)
+    end
+
+    it 'raises if invalid argument when creating a provisional identity' do
+      args = [@trustchain[:id], @user_email]
+      expect { Tanker::Identity.create_provisional_identity(*corrupt(args, 0, @not_string)) }.to raise_exception(TypeError)
+      expect { Tanker::Identity.create_provisional_identity(*corrupt(args, 1, @not_string)) }.to raise_exception(TypeError)
+    end
+
+    it 'raises if invalid argument when getting a public identity' do
+      expect { Tanker::Identity.get_public_identity(@not_string) }.to raise_exception(TypeError)
+      expect { Tanker::Identity.get_public_identity(@not_b64) }.to raise_exception(ArgumentError)
+    end
+  end
+
   describe 'permanent identity' do
     def assert_user_secret(identity)
       hashed_user_id = Base64.decode64(@identity['value'])
