@@ -9,6 +9,7 @@ RSpec.describe Tanker::Identity do
     @hashed_user_id = 'RDa0eq4XNuj5tV7hdapjOxhmheTh4QBDNpy4Svy9Xok='
     @permanent_identity = 'eyJ0cnVzdGNoYWluX2lkIjoidHBveHlOemgwaFU5RzJpOWFnTXZIeXlkK3BPNnpHQ2pPOUJmaHJDTGpkND0iLCJ0YXJnZXQiOiJ1c2VyIiwidmFsdWUiOiJSRGEwZXE0WE51ajV0VjdoZGFwak94aG1oZVRoNFFCRE5weTRTdnk5WG9rPSIsImRlbGVnYXRpb25fc2lnbmF0dXJlIjoiVTlXUW9sQ3ZSeWpUOG9SMlBRbWQxV1hOQ2kwcW1MMTJoTnJ0R2FiWVJFV2lyeTUya1d4MUFnWXprTHhINmdwbzNNaUE5cisremhubW9ZZEVKMCtKQ3c9PSIsImVwaGVtZXJhbF9wdWJsaWNfc2lnbmF0dXJlX2tleSI6IlhoM2kweERUcHIzSFh0QjJRNTE3UUt2M2F6TnpYTExYTWRKRFRTSDRiZDQ9IiwiZXBoZW1lcmFsX3ByaXZhdGVfc2lnbmF0dXJlX2tleSI6ImpFRFQ0d1FDYzFERndvZFhOUEhGQ2xuZFRQbkZ1Rm1YaEJ0K2lzS1U0WnBlSGVMVEVOT212Y2RlMEhaRG5YdEFxL2RyTTNOY3N0Y3gwa05OSWZodDNnPT0iLCJ1c2VyX3NlY3JldCI6IjdGU2YvbjBlNzZRVDNzMERrdmV0UlZWSmhYWkdFak94ajVFV0FGZXh2akk9In0='
     @provisional_identity = 'eyJ0cnVzdGNoYWluX2lkIjoidHBveHlOemgwaFU5RzJpOWFnTXZIeXlkK3BPNnpHQ2pPOUJmaHJDTGpkND0iLCJ0YXJnZXQiOiJlbWFpbCIsInZhbHVlIjoiYnJlbmRhbi5laWNoQHRhbmtlci5pbyIsInB1YmxpY19lbmNyeXB0aW9uX2tleSI6Ii8yajRkSTNyOFBsdkNOM3VXNEhoQTV3QnRNS09jQUNkMzhLNk4wcSttRlU9IiwicHJpdmF0ZV9lbmNyeXB0aW9uX2tleSI6IjRRQjVUV212Y0JyZ2V5RERMaFVMSU5VNnRicUFPRVE4djlwakRrUGN5YkE9IiwicHVibGljX3NpZ25hdHVyZV9rZXkiOiJXN1FFUUJ1OUZYY1hJcE9ncTYydFB3Qml5RkFicFQxckFydUQwaC9OclRBPSIsInByaXZhdGVfc2lnbmF0dXJlX2tleSI6IlVtbll1dmRUYUxZRzBhK0phRHBZNm9qdzQvMkxsOHpzbXJhbVZDNGZ1cVJidEFSQUc3MFZkeGNpazZDcnJhMC9BR0xJVUJ1bFBXc0N1NFBTSDgydE1BPT0ifQ=='
+    @public_identity = 'eyJ0YXJnZXQiOiJ1c2VyIiwidHJ1c3RjaGFpbl9pZCI6InRwb3h5TnpoMGhVOUcyaTlhZ012SHl5ZCtwTzZ6R0NqTzlCZmhyQ0xqZDQ9IiwidmFsdWUiOiJSRGEwZXE0WE51ajV0VjdoZGFwak94aG1oZVRoNFFCRE5weTRTdnk5WG9rPSJ9'
   end
 
   describe 'parse' do
@@ -34,6 +35,14 @@ RSpec.describe Tanker::Identity do
       expect(identity['private_signature_key']).to eq('UmnYuvdTaLYG0a+JaDpY6ojw4/2Ll8zsmramVC4fuqRbtARAG70Vdxcik6Crra0/AGLIUBulPWsCu4PSH82tMA==')
       expect(identity['public_encryption_key']).to eq('/2j4dI3r8PlvCN3uW4HhA5wBtMKOcACd38K6N0q+mFU=')
       expect(identity['private_encryption_key']).to eq('4QB5TWmvcBrgeyDDLhULINU6tbqAOEQ8v9pjDkPcybA=')
+    end
+
+    it 'a valid public identity' do
+      identity = Tanker::Identity.deserialize(@public_identity)
+
+      expect(identity['trustchain_id']).to eq(@trustchain[:id])
+      expect(identity['target']).to eq('user')
+      expect(identity['value']).to eq(@hashed_user_id)
     end
   end
 
@@ -73,6 +82,15 @@ RSpec.describe Tanker::Identity do
       assert_user_secret(@identity)
       assert_signature(@identity, @trustchain[:public_key])
     end
+
+    it 'returns a public identity from a permanent identity' do
+      b64_public_identity = Tanker::Identity.get_public_identity(@b64_identity)
+      public_identity = Tanker::Identity.deserialize(b64_public_identity)
+      expect(public_identity.keys.sort).to eq ['target', 'trustchain_id', 'value']
+      expect(public_identity['trustchain_id']).to eq @trustchain[:id]
+      expect(public_identity['target']).to eq 'user'
+      expect(public_identity['value']).to eq @identity['value']
+    end
   end
 
   describe 'provisional identity' do
@@ -86,6 +104,17 @@ RSpec.describe Tanker::Identity do
       expect(@identity['trustchain_id']).to eq @trustchain[:id]
       expect(@identity['target']).to eq 'email'
       expect(@identity['value']).to eq @user_email
+    end
+
+    it 'returns a public identity from a provisional identity' do
+      b64_public_identity = Tanker::Identity.get_public_identity(@b64_identity)
+      public_identity = Tanker::Identity.deserialize(b64_public_identity)
+      expect(public_identity.keys.sort).to eq ['public_encryption_key', 'public_signature_key', 'target', 'trustchain_id', 'value']
+      expect(public_identity['trustchain_id']).to eq @trustchain[:id]
+      expect(public_identity['target']).to eq 'email'
+      expect(public_identity['value']).to eq @user_email
+      expect(public_identity['public_encryption_key']).to eq @identity['public_encryption_key']
+      expect(public_identity['public_signature_key']).to eq @identity['public_signature_key']
     end
   end
 end

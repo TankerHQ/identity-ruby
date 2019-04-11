@@ -64,5 +64,22 @@ module Tanker
         private_signature_key: Base64.strict_encode64(signature_keypair[:private_key])
       })
     end
+
+    def self.get_public_identity(serialized_identity)
+      identity = deserialize(serialized_identity)
+
+      if identity['target'] == 'user'
+        public_keys = ['trustchain_id', 'target', 'value']
+      else
+        public_keys = ['trustchain_id', 'target', 'value', 'public_encryption_key', 'public_signature_key']
+      end
+
+      public_identity = {}
+      public_keys.each { |key| public_identity[key] = identity.fetch(key) }
+
+      serialize(public_identity)
+    rescue KeyError # failed fetch
+      raise ArgumentError.new('Not a valid Tanker identity')
+    end
   end
 end
