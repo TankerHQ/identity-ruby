@@ -1,28 +1,84 @@
-# Tanker::Identity
+# Identity [![Travis][build-badge]][build]
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/tanker/identity`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Identity generation in Ruby for the [Tanker SDK](https://tanker.io/docs/latest).
 
 ## Installation
 
-Add this line to your application's Gemfile:
+This project depends on the [rbnacl](https://github.com/crypto-rb/rbnacl) gem, which requires the [libsodium](https://download.libsodium.org/doc/) cryptographic library.
+
+Before going further, please follow [instructions to install libsodium](https://github.com/crypto-rb/rbnacl/wiki/Installing-libsodium).
+
+Then, add this line to your application's Gemfile:
 
 ```ruby
-gem 'tanker-identity'
+gem 'tanker-identity', git: 'https://github.com/TankerHQ/identity-ruby' #, tag: 'vX.Y.Z'
 ```
 
-And then execute:
+Finally, execute:
 
     $ bundle
 
-Or install it yourself as:
-
-    $ gem install tanker-identity
-
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+require 'tanker-identity'
+
+Tanker::Identity.create_identity(trustchain_id, trustchain_private_key, user_id)
+Tanker::Identity.create_provisional_identity(trustchain_id, email)
+Tanker::Identity.get_public_identity(identity)
+
+# if migrating from SDK < 2.0.0
+Tanker::Identity.upgrade_user_token(trustchain_id, user_id, user_token) # => identity
+```
+
+## Usage example
+
+The server-side pseudo-code below demonstrates a typical flow to safely deliver identities to your users:
+
+```ruby
+require 'tanker-identity'
+
+# 1. store these configurations in a safe place
+trustchain_id = '<trustchain-id>'
+trustchain_private_key = '<trustchain-private-key>'
+
+# 2. you will typically have methods to check user authentication
+def authenticated? # check user is authenticated on the server
+def current_user   # current authenticated user
+
+# 3. you will need to add internal methods to store / load identities
+def db_store_identity(user_id, identity)
+def db_load_identity(user_id)
+
+# 4. finally, add user facing functionality
+def tanker_secret_identity(user_id)
+  raise 'Not authenticated' unless authenticated?
+  raise 'Not authorized' unless current_user.id == user_id
+
+  identity = db_load_identity(user_id)
+
+  if identity.nil?
+    identity = Tanker::Identity.create_identity(trustchain_id, trustchain_private_key, user_id)
+    db_store_identity(user_id, identity)
+  end
+
+  identity
+end
+
+def tanker_public_identity(user_id)
+  raise 'Not authenticated' unless authenticated?
+
+  identity = db_load_identity(user_id)
+
+  raise 'User does not exist or has no identity yet' unless identity
+
+  Tanker::Identity.get_public_identity(identity)
+end
+```
+
+Read more about identities in the [Tanker documentation](https://docs.tanker.io/latest/).
+
+Check the [examples](https://github.com/TankerHQ/identity-ruby/tree/master/examples/) folder for usage examples.
 
 ## Development
 
@@ -32,4 +88,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/tanker-identity.
+Bug reports and pull requests are welcome on GitHub at https://github.com/TankerHQ/identity-ruby.
+
+[build-badge]: https://travis-ci.org/TankerHQ/identity-ruby.svg?branch=master
+[build]: https://travis-ci.org/TankerHQ/identity-ruby

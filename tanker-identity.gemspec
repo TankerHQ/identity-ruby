@@ -1,11 +1,11 @@
 
 lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require "tanker/identity/version"
+require "tanker/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "tanker-identity"
-  spec.version       = Tanker::Identity::VERSION
+  spec.version       = Tanker::VERSION
   spec.authors       = ["Tanker Team"]
   spec.email         = ["contact@tanker.io"]
 
@@ -33,6 +33,8 @@ Gem::Specification.new do |spec|
   end
 
   spec.require_paths = ["lib"]
+
+  spec.add_runtime_dependency "rbnacl", "~> 6.0.1"
 
   spec.add_development_dependency "bundler", "~> 2.0"
   spec.add_development_dependency "rake", "~> 10.0"

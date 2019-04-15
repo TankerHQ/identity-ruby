@@ -1,0 +1,31 @@
+# Sinatra server example
+
+## Installation
+
+```bash
+cp config-trustchain.json.example config-trustchain.json
+# edit to add your credentials
+
+bundle install
+```
+
+## Usage
+
+Launch Sinatra server in terminal:
+
+```bash
+ruby config.ru
+```
+
+Try some requests:
+
+```bash
+curl -i -X GET http://127.0.0.1:4567/authenticate/alice
+curl -i -X GET http://127.0.0.1:4567/me/tanker_secret_identity
+curl -i -X GET http://127.0.0.1:4567/users/alice/tanker_public_identity
+
+curl -i -X GET http://127.0.0.1:4567/authenticate/bob
+curl -i -X GET http://127.0.0.1:4567/me/tanker_secret_identity
+curl -i -X GET http://127.0.0.1:4567/users/alice/tanker_public_identity
+curl -i -X GET http://127.0.0.1:4567/users/bob/tanker_public_identity
+```
