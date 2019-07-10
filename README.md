@@ -18,18 +18,57 @@ Finally, execute:
 
     $ bundle
 
-## Usage
+## API
 
 ```ruby
-require 'tanker-identity'
-
 Tanker::Identity.create_identity(app_id, app_secret, user_id)
-Tanker::Identity.create_provisional_identity(app_id, email)
-Tanker::Identity.get_public_identity(identity)
+```
+Create a new Tanker identity. This identity is secret and must only be given to a user who has been authenticated by your application. This identity is used by the Tanker client SDK to open a Tanker session.
 
-# if migrating from SDK < 2.0.0
+**app_id**<br>
+The app ID. You can access it from the [Tanker dashboard](https://dashboard.tanker.io).
+
+**app_secret**<br>
+The app secret. A secret that you have saved right after the creation of your app on the [Tanker dashboard](https://dashboard.tanker.io).
+
+**user_id**<br>
+The unique ID of a user in your application.
+<br><br>
+
+```ruby
+Tanker::Identity.create_provisional_identity(app_id, email)
+```
+Create a Tanker provisional identity. It allows you to share a resource with a user who does not have an account in your application yet.
+
+**app_id**<br>
+The app ID. You can access it from the [Tanker dashboard](https://dashboard.tanker.io).
+
+**email**<br>
+The email of the potential recipient of the resource.
+<br><br>
+
+```ruby
+Tanker::Identity.get_public_identity(identity)
+```
+Return the public identity from an identity. This public identity can be used by the Tanker client SDK to share encrypted resource.
+
+**identity**<br>
+A secret identity.
+<br><br>
+
+```ruby
 Tanker::Identity.upgrade_user_token(app_id, user_id, user_token) # => identity
 ```
+Return a Tanker identity from Tanker v1 user Token. Tanker v1 used a user token, when migrating to Tanker v2 you should use this function to migrate you used tokens to identities. This identity is secret and must only be given to a user who has been authenticated by your application. This identity is used by the Tanker client SDK to open a Tanker session.
+
+**app_id**<br>
+The app ID. You can access it from the [Tanker dashboard](https://dashboard.tanker.io).
+
+**user_id**<br>
+The unique ID of a user in your application.
+
+**user_token**<br>
+The Tanker v1 user token.
 
 ## Usage example
 
