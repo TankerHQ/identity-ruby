@@ -3,7 +3,7 @@
 ## Installation
 
 ```bash
-cp config-trustchain.json.example config-trustchain.json
+cp config-app.json.example config-app.json
 # edit to add your credentials
 
 bundle install

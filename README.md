@@ -23,12 +23,12 @@ Finally, execute:
 ```ruby
 require 'tanker-identity'
 
-Tanker::Identity.create_identity(trustchain_id, trustchain_private_key, user_id)
-Tanker::Identity.create_provisional_identity(trustchain_id, email)
+Tanker::Identity.create_identity(app_id, app_secret, user_id)
+Tanker::Identity.create_provisional_identity(app_id, email)
 Tanker::Identity.get_public_identity(identity)
 
 # if migrating from SDK < 2.0.0
-Tanker::Identity.upgrade_user_token(trustchain_id, user_id, user_token) # => identity
+Tanker::Identity.upgrade_user_token(app_id, user_id, user_token) # => identity
 ```
 
 ## Usage example
@@ -39,8 +39,8 @@ The server-side pseudo-code below demonstrates a typical flow to safely deliver 
 require 'tanker-identity'
 
 # 1. store these configurations in a safe place
-trustchain_id = '<trustchain-id>'
-trustchain_private_key = '<trustchain-private-key>'
+app_id = '<app-id>'
+app_secret = '<app-secret>'
 
 # 2. you will typically have methods to check user authentication
 def authenticated? # check user is authenticated on the server
@@ -58,7 +58,7 @@ def tanker_secret_identity(user_id)
   identity = db_load_identity(user_id)
 
   if identity.nil?
-    identity = Tanker::Identity.create_identity(trustchain_id, trustchain_private_key, user_id)
+    identity = Tanker::Identity.create_identity(app_id, app_secret, user_id)
     db_store_identity(user_id, identity)
   end
 
