@@ -25,7 +25,7 @@ class Server < Sinatra::Base
 
   # TODO: ensure config is stored in a secure place
   configure do
-    set config: JSON.parse(File.read('config-trustchain.json'))
+    set config: JSON.parse(File.read('config-app.json'))
   end
 
   # TODO: use real auth mechanism
@@ -50,9 +50,9 @@ class Server < Sinatra::Base
     identity = db_load_identity(user_id)
 
     unless identity
-      trustchain_id = settings.config['trustchainId'];
-      trustchain_private_key = settings.config['trustchainPrivateKey'];
-      identity = Tanker::Identity.create_identity(trustchain_id, trustchain_private_key, user_id)
+      app_id = settings.config['appId'];
+      app_secret = settings.config['appSecret'];
+      identity = Tanker::Identity.create_identity(app_id, app_secret, user_id)
       db_store_identity(user_id, identity)
     end
 

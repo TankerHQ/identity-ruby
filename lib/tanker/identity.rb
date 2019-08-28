@@ -9,9 +9,9 @@ module Tanker
 
     private
 
-    def self.hash_user_id(trustchain_id, user_id)
+    def self.hash_user_id(app_id, user_id)
       binary_user_id = user_id.dup.force_encoding(Encoding::ASCII_8BIT)
-      Crypto.generichash(binary_user_id + trustchain_id, BLOCK_HASH_SIZE)
+      Crypto.generichash(binary_user_id + app_id, BLOCK_HASH_SIZE)
     end
 
     def self.user_secret(hashed_user_id)
@@ -38,23 +38,23 @@ module Tanker
       Base64.strict_encode64(JSON.generate(hash))
     end
 
-    def self.create_identity(b64_trustchain_id, b64_trustchain_private_key, user_id)
+    def self.create_identity(b64_app_id, b64_app_secret, user_id)
       assert_string_values({
-        trustchain_id: b64_trustchain_id,
-        trustchain_private_key: b64_trustchain_private_key,
+        app_id: b64_app_id,
+        app_secret: b64_app_secret,
         user_id: user_id
       })
 
-      trustchain_id = Base64.strict_decode64(b64_trustchain_id)
-      trustchain_private_key = Base64.strict_decode64(b64_trustchain_private_key)
+      app_id = Base64.strict_decode64(b64_app_id)
+      app_secret = Base64.strict_decode64(b64_app_secret)
 
-      hashed_user_id = hash_user_id(trustchain_id, user_id)
+      hashed_user_id = hash_user_id(app_id, user_id)
       signature_keypair = Crypto.generate_signature_keypair
       message = signature_keypair[:public_key] + hashed_user_id
-      signature = Crypto.sign_detached(message, trustchain_private_key)
+      signature = Crypto.sign_detached(message, app_secret)
 
       serialize({
-        trustchain_id: Base64.strict_encode64(trustchain_id),
+        trustchain_id: Base64.strict_encode64(app_id),
         target: 'user',
         value: Base64.strict_encode64(hashed_user_id),
         delegation_signature: Base64.strict_encode64(signature),
@@ -64,9 +64,9 @@ module Tanker
       })
     end
 
-    def self.create_provisional_identity(b64_trustchain_id, email)
+    def self.create_provisional_identity(b64_app_id, email)
       assert_string_values({
-        trustchain_id: b64_trustchain_id,
+        app_id: b64_app_id,
         email: email
       })
 
@@ -74,7 +74,7 @@ module Tanker
       signature_keypair = Crypto.generate_signature_keypair
 
       serialize({
-        trustchain_id: b64_trustchain_id,
+        trustchain_id: b64_app_id,
         target: 'email',
         value: email,
         public_encryption_key: Base64.strict_encode64(encryption_keypair[:public_key]),
@@ -103,16 +103,16 @@ module Tanker
       raise ArgumentError.new('Not a valid Tanker identity')
     end
 
-    def self.upgrade_user_token(b64_trustchain_id, user_id, user_token)
+    def self.upgrade_user_token(b64_app_id, user_id, user_token)
       assert_string_values({
-        trustchain_id: b64_trustchain_id,
+        app_id: b64_app_id,
         user_id: user_id,
         user_token: user_token
       })
 
       identity = deserialize(user_token)
       identity['target'] = 'user'
-      identity['trustchain_id'] = b64_trustchain_id
+      identity['trustchain_id'] = b64_app_id
       identity['value'] = identity.delete('user_id')
 
       serialize(identity)

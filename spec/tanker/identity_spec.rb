@@ -3,7 +3,7 @@ RSpec.describe Tanker::Identity do
   before(:all) do
     # Note: vectors below were generated with the Javascript SDK. We keep it to
     #       check Javascript and Ruby code are interoperable
-    @trustchain = test_trustchain
+    @app = test_app
     @user_id = 'b_eich'
     @user_email = 'brendan.eich@tanker.io'
     @hashed_user_id = 'RDa0eq4XNuj5tV7hdapjOxhmheTh4QBDNpy4Svy9Xok='
@@ -17,7 +17,7 @@ RSpec.describe Tanker::Identity do
     it 'a valid permanent identity' do
       identity = Tanker::Identity.deserialize(@permanent_identity)
 
-      expect(identity['trustchain_id']).to eq(@trustchain[:id])
+      expect(identity['trustchain_id']).to eq(@app[:id])
       expect(identity['target']).to eq('user')
       expect(identity['value']).to eq(@hashed_user_id)
       expect(identity['delegation_signature']).to eq('U9WQolCvRyjT8oR2PQmd1WXNCi0qmL12hNrtGabYREWiry52kWx1AgYzkLxH6gpo3MiA9r++zhnmoYdEJ0+JCw==')
@@ -29,7 +29,7 @@ RSpec.describe Tanker::Identity do
     it 'a valid provisional identity' do
       identity = Tanker::Identity.deserialize(@provisional_identity)
 
-      expect(identity['trustchain_id']).to eq(@trustchain[:id])
+      expect(identity['trustchain_id']).to eq(@app[:id])
       expect(identity['target']).to eq('email')
       expect(identity['value']).to eq(@user_email)
       expect(identity['public_signature_key']).to eq('W7QEQBu9FXcXIpOgq62tPwBiyFAbpT1rAruD0h/NrTA=')
@@ -41,7 +41,7 @@ RSpec.describe Tanker::Identity do
     it 'a valid public identity' do
       identity = Tanker::Identity.deserialize(@public_identity)
 
-      expect(identity['trustchain_id']).to eq(@trustchain[:id])
+      expect(identity['trustchain_id']).to eq(@app[:id])
       expect(identity['target']).to eq('user')
       expect(identity['value']).to eq(@hashed_user_id)
     end
@@ -58,7 +58,7 @@ RSpec.describe Tanker::Identity do
     end
 
     it "raises if invalid argument when creating a permanent identity" do
-      args = [@trustchain[:id], @trustchain[:private_key], @user_id]
+      args = [@app[:id], @app[:secret], @user_id]
       expect { Tanker::Identity.create_identity(*corrupt(args, 0, @not_string)) }.to raise_exception(TypeError)
       expect { Tanker::Identity.create_identity(*corrupt(args, 1, @not_string)) }.to raise_exception(TypeError)
       expect { Tanker::Identity.create_identity(*corrupt(args, 2, @not_string)) }.to raise_exception(TypeError)
@@ -67,7 +67,7 @@ RSpec.describe Tanker::Identity do
     end
 
     it 'raises if invalid argument when creating a provisional identity' do
-      args = [@trustchain[:id], @user_email]
+      args = [@app[:id], @user_email]
       expect { Tanker::Identity.create_provisional_identity(*corrupt(args, 0, @not_string)) }.to raise_exception(TypeError)
       expect { Tanker::Identity.create_provisional_identity(*corrupt(args, 1, @not_string)) }.to raise_exception(TypeError)
     end
@@ -90,12 +90,12 @@ RSpec.describe Tanker::Identity do
       expect(control_byte).to eq(control.bytes.first)
     end
 
-    def assert_signature(identity, trustchain_public_key)
+    def assert_signature(identity, app_public_key)
       signed_data = Base64.decode64(identity['ephemeral_public_signature_key']) +
                     Base64.decode64(identity['value'])
 
       signature = Base64.decode64(identity['delegation_signature'])
-      public_key = Base64.decode64(trustchain_public_key)
+      public_key = Base64.decode64(app_public_key)
 
       expect {
         Tanker::Crypto.verify_sign_detached(signed_data, signature, public_key)
@@ -103,23 +103,23 @@ RSpec.describe Tanker::Identity do
     end
 
     before(:all) do
-      @b64_identity = Tanker::Identity.create_identity(@trustchain[:id], @trustchain[:private_key], @user_id)
+      @b64_identity = Tanker::Identity.create_identity(@app[:id], @app[:secret], @user_id)
       @identity = Tanker::Identity.deserialize(@b64_identity)
     end
 
     it 'returns a permanent identity' do
       expect(@identity.keys.sort).to eq ['delegation_signature', 'ephemeral_private_signature_key', 'ephemeral_public_signature_key', 'target', 'trustchain_id', 'user_secret', 'value']
-      expect(@identity['trustchain_id']).to eq @trustchain[:id]
+      expect(@identity['trustchain_id']).to eq @app[:id]
       expect(@identity['target']).to eq 'user'
       assert_user_secret(@identity)
-      assert_signature(@identity, @trustchain[:public_key])
+      assert_signature(@identity, @app[:public_key])
     end
 
     it 'returns a public identity from a permanent identity' do
       b64_public_identity = Tanker::Identity.get_public_identity(@b64_identity)
       public_identity = Tanker::Identity.deserialize(b64_public_identity)
       expect(public_identity.keys.sort).to eq ['target', 'trustchain_id', 'value']
-      expect(public_identity['trustchain_id']).to eq @trustchain[:id]
+      expect(public_identity['trustchain_id']).to eq @app[:id]
       expect(public_identity['target']).to eq 'user'
       expect(public_identity['value']).to eq @identity['value']
     end
@@ -127,13 +127,13 @@ RSpec.describe Tanker::Identity do
 
   describe 'provisional identity' do
     before(:all) do
-      @b64_identity = Tanker::Identity.create_provisional_identity(@trustchain[:id], @user_email)
+      @b64_identity = Tanker::Identity.create_provisional_identity(@app[:id], @user_email)
       @identity = Tanker::Identity.deserialize(@b64_identity)
     end
 
     it 'returns a provisional identity' do
       expect(@identity.keys.sort).to eq ['private_encryption_key', 'private_signature_key', 'public_encryption_key', 'public_signature_key', 'target', 'trustchain_id', 'value']
-      expect(@identity['trustchain_id']).to eq @trustchain[:id]
+      expect(@identity['trustchain_id']).to eq @app[:id]
       expect(@identity['target']).to eq 'email'
       expect(@identity['value']).to eq @user_email
     end
@@ -142,7 +142,7 @@ RSpec.describe Tanker::Identity do
       b64_public_identity = Tanker::Identity.get_public_identity(@b64_identity)
       public_identity = Tanker::Identity.deserialize(b64_public_identity)
       expect(public_identity.keys.sort).to eq ['public_encryption_key', 'public_signature_key', 'target', 'trustchain_id', 'value']
-      expect(public_identity['trustchain_id']).to eq @trustchain[:id]
+      expect(public_identity['trustchain_id']).to eq @app[:id]
       expect(public_identity['target']).to eq 'email'
       expect(public_identity['value']).to eq @user_email
       expect(public_identity['public_encryption_key']).to eq @identity['public_encryption_key']
@@ -152,7 +152,7 @@ RSpec.describe Tanker::Identity do
 
   describe 'upgrade' do
     it 'a user token into a permanent identity' do
-      b64_upgraded_identity = Tanker::Identity.upgrade_user_token(@trustchain[:id], @user_id, @user_token)
+      b64_upgraded_identity = Tanker::Identity.upgrade_user_token(@app[:id], @user_id, @user_token)
       upgraded_identity = Tanker::Identity.deserialize(b64_upgraded_identity)
       permanent_identity = Tanker::Identity.deserialize(@permanent_identity)
       expect(upgraded_identity).to eq(permanent_identity)

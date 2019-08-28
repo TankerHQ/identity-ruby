@@ -4,10 +4,10 @@ require 'tanker-identity'
 module Helpers
   # Note: this was generated with the Javascript SDK. We keep it to check Javascript
   # and Ruby code are interoperable
-  def test_trustchain
+  def test_app
     {
       id: "tpoxyNzh0hU9G2i9agMvHyyd+pO6zGCjO9BfhrCLjd4=",
-      private_key: "cTMoGGUKhwN47ypq4xAXAtVkNWeyUtMltQnYwJhxWYSvqjPVGmXd2wwa7y17QtPTZhn8bxb015CZC/e4ZI7+MQ==",
+      secret: "cTMoGGUKhwN47ypq4xAXAtVkNWeyUtMltQnYwJhxWYSvqjPVGmXd2wwa7y17QtPTZhn8bxb015CZC/e4ZI7+MQ==",
       public_key: "r6oz1Rpl3dsMGu8te0LT02YZ/G8W9NeQmQv3uGSO/jE=",
     }
   end

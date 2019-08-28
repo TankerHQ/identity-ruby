@@ -25,9 +25,9 @@ RSpec.describe Tanker::Crypto do
     end
 
     it 'should sign and verify using existing keypair' do
-      public_key = Base64.decode64(test_trustchain[:public_key])
-      private_key = Base64.decode64(test_trustchain[:private_key])
-      signature = Tanker::Crypto.sign_detached(@message, private_key)
+      public_key = Base64.decode64(test_app[:public_key])
+      secret = Base64.decode64(test_app[:secret])
+      signature = Tanker::Crypto.sign_detached(@message, secret)
       Tanker::Crypto.verify_sign_detached(@message, signature, public_key)
     end
 
