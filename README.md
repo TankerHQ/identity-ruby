@@ -1,4 +1,4 @@
-# Identity [![Travis][build-badge]][build]
+# Identity [![codecov](https://codecov.io/gh/TankerHQ/identity-ruby/branch/master/graph/badge.svg)](https://codecov.io/gh/TankerHQ/identity-ruby)
 
 Identity generation in Ruby for the [Tanker SDK](https://tanker.io/docs/latest).
 
