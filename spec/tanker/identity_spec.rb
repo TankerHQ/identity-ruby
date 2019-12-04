@@ -123,6 +123,13 @@ RSpec.describe Tanker::Identity do
       expect(public_identity['target']).to eq 'user'
       expect(public_identity['value']).to eq @identity['value']
     end
+
+    it 'throws if app ID and app secret mismatch' do
+      mismatching_app_id = "rB0/yEJWCUVYRtDZLtXaJqtneXQOsCSKrtmWw+V+ysc="
+      expect {
+        Tanker::Identity.create_identity(mismatching_app_id, @app[:secret], @user_id)
+      }.to raise_exception(ArgumentError)
+    end
   end
 
   describe 'provisional identity' do
