@@ -6,6 +6,10 @@ module Tanker
   module Identity
     BLOCK_HASH_SIZE = 32
     USER_SECRET_SIZE = 32
+    APP_SECRET_SIZE = 64
+    APP_PUBLIC_KEY_SIZE = 32
+    AUTHOR_SIZE = 32
+    APP_CREATION_NATURE = 1
 
     private
 
@@ -38,6 +42,12 @@ module Tanker
       Base64.strict_encode64(JSON.generate(hash))
     end
 
+    def self.generate_app_id(app_secret)
+      publicKey = app_secret[APP_SECRET_SIZE - APP_PUBLIC_KEY_SIZE..APP_SECRET_SIZE]
+      to_hash = "\1" + "\0" * 32 + publicKey
+      Crypto.generichash(to_hash, BLOCK_HASH_SIZE)
+    end
+
     def self.create_identity(b64_app_id, b64_app_secret, user_id)
       assert_string_values({
         app_id: b64_app_id,
@@ -47,6 +57,11 @@ module Tanker
 
       app_id = Base64.strict_decode64(b64_app_id)
       app_secret = Base64.strict_decode64(b64_app_secret)
+
+      generated_app_id = self.generate_app_id(app_secret)
+      unless generated_app_id == app_id
+        raise ArgumentError.new("app secret and app ID mismatch")
+      end
 
       hashed_user_id = hash_user_id(app_id, user_id)
       signature_keypair = Crypto.generate_signature_keypair
