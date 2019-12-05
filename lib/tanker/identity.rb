@@ -4,12 +4,12 @@ require 'json'
 
 module Tanker
   module Identity
-    BLOCK_HASH_SIZE = 32
-    USER_SECRET_SIZE = 32
+    APP_CREATION_NATURE = 1
     APP_SECRET_SIZE = 64
     APP_PUBLIC_KEY_SIZE = 32
     AUTHOR_SIZE = 32
-    APP_CREATION_NATURE = 1
+    BLOCK_HASH_SIZE = 32
+    USER_SECRET_SIZE = 32
 
     private
 
@@ -32,6 +32,13 @@ module Tanker
       end
     end
 
+    def self.generate_app_id(app_secret)
+      block_nature = APP_CREATION_NATURE.chr(Encoding::ASCII_8BIT)
+      none_author = 0.chr(Encoding::ASCII_8BIT) * AUTHOR_SIZE
+      app_public_key = app_secret[-APP_PUBLIC_KEY_SIZE..-1]
+      Crypto.generichash(block_nature + none_author + app_public_key, BLOCK_HASH_SIZE)
+    end
+
     public
 
     def self.deserialize(b64_json)
@@ -40,12 +47,6 @@ module Tanker
 
     def self.serialize(hash)
       Base64.strict_encode64(JSON.generate(hash))
-    end
-
-    def self.generate_app_id(app_secret)
-      publicKey = app_secret[APP_SECRET_SIZE - APP_PUBLIC_KEY_SIZE..APP_SECRET_SIZE]
-      to_hash = "\1" + "\0" * 32 + publicKey
-      Crypto.generichash(to_hash, BLOCK_HASH_SIZE)
     end
 
     def self.create_identity(b64_app_id, b64_app_secret, user_id)
@@ -58,10 +59,9 @@ module Tanker
       app_id = Base64.strict_decode64(b64_app_id)
       app_secret = Base64.strict_decode64(b64_app_secret)
 
-      generated_app_id = self.generate_app_id(app_secret)
-      unless generated_app_id == app_id
-        raise ArgumentError.new("app secret and app ID mismatch")
-      end
+      raise ArgumentError.new("Invalid app_id") if app_id.bytesize != BLOCK_HASH_SIZE
+      raise ArgumentError.new("Invalid app_secret") if app_secret.bytesize != APP_SECRET_SIZE
+      raise ArgumentError.new("Invalid (app_id, app_secret) combination") if app_id != generate_app_id(app_secret)
 
       hashed_user_id = hash_user_id(app_id, user_id)
       signature_keypair = Crypto.generate_signature_keypair
@@ -84,6 +84,9 @@ module Tanker
         app_id: b64_app_id,
         email: email
       })
+
+      app_id = Base64.strict_decode64(b64_app_id)
+      raise ArgumentError.new("Invalid app_id") if app_id.bytesize != BLOCK_HASH_SIZE
 
       encryption_keypair = Crypto.generate_encryption_keypair
       signature_keypair = Crypto.generate_signature_keypair
