@@ -57,6 +57,10 @@ RSpec.describe Tanker::Identity do
       arr.dup.tap { |a| a[pos] = value }
     end
 
+    def truncate_b64(arr, pos, bytesize)
+      arr.dup.tap { |a| a[pos] = Base64.strict_encode64(Base64.strict_decode64(a[pos])[0..(bytesize - 1)]) }
+    end
+
     it "raises if invalid argument when creating a permanent identity" do
       args = [@app[:id], @app[:secret], @user_id]
       expect { Tanker::Identity.create_identity(*corrupt(args, 0, @not_string)) }.to raise_exception(TypeError)
@@ -64,12 +68,22 @@ RSpec.describe Tanker::Identity do
       expect { Tanker::Identity.create_identity(*corrupt(args, 2, @not_string)) }.to raise_exception(TypeError)
       expect { Tanker::Identity.create_identity(*corrupt(args, 0, @not_b64)) }.to raise_exception(ArgumentError)
       expect { Tanker::Identity.create_identity(*corrupt(args, 1, @not_b64)) }.to raise_exception(ArgumentError)
+      expect { Tanker::Identity.create_identity(*truncate_b64(args, 0, 16)) }.to raise_exception(ArgumentError)
+      expect { Tanker::Identity.create_identity(*truncate_b64(args, 1, 32)) }.to raise_exception(ArgumentError)
+    end
+
+    it 'raises if app id and app secret mismatch when creating a permanent identity' do
+      mismatching_app_id = "rB0/yEJWCUVYRtDZLtXaJqtneXQOsCSKrtmWw+V+ysc="
+      args = [mismatching_app_id, @app[:secret], @user_id]
+      expect { Tanker::Identity.create_identity(*args) }.to raise_exception(ArgumentError)
     end
 
     it 'raises if invalid argument when creating a provisional identity' do
       args = [@app[:id], @user_email]
       expect { Tanker::Identity.create_provisional_identity(*corrupt(args, 0, @not_string)) }.to raise_exception(TypeError)
       expect { Tanker::Identity.create_provisional_identity(*corrupt(args, 1, @not_string)) }.to raise_exception(TypeError)
+      expect { Tanker::Identity.create_provisional_identity(*corrupt(args, 0, @not_b64)) }.to raise_exception(ArgumentError)
+      expect { Tanker::Identity.create_provisional_identity(*truncate_b64(args, 0, 16)) }.to raise_exception(ArgumentError)
     end
 
     it 'raises if invalid argument when getting a public identity' do
@@ -122,13 +136,6 @@ RSpec.describe Tanker::Identity do
       expect(public_identity['trustchain_id']).to eq @app[:id]
       expect(public_identity['target']).to eq 'user'
       expect(public_identity['value']).to eq @identity['value']
-    end
-
-    it 'throws if app ID and app secret mismatch' do
-      mismatching_app_id = "rB0/yEJWCUVYRtDZLtXaJqtneXQOsCSKrtmWw+V+ysc="
-      expect {
-        Tanker::Identity.create_identity(mismatching_app_id, @app[:secret], @user_id)
-      }.to raise_exception(ArgumentError)
     end
   end
 
