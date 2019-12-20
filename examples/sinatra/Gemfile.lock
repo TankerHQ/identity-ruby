@@ -10,25 +10,25 @@ GEM
     ffi (1.10.0)
     mustermann (1.0.3)
     rack (2.0.8)
-    rack-protection (2.0.5)
+    rack-protection (2.0.7)
       rack
     rbnacl (6.0.1)
       ffi
-    sinatra (2.0.5)
+    sinatra (2.0.7)
       mustermann (~> 1.0)
       rack (~> 2.0)
-      rack-protection (= 2.0.5)
+      rack-protection (= 2.0.7)
       tilt (~> 2.0)
     sinatra-cross_origin (0.4.0)
-    tilt (2.0.9)
+    tilt (2.0.10)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  sinatra (~> 2.0.5)
+  sinatra (~> 2.0.7)
   sinatra-cross_origin (~> 0.4.0)
   tanker-identity!
 
 BUNDLED WITH
-   2.0.1
+   2.1.2
