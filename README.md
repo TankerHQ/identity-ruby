@@ -56,20 +56,6 @@ Return the public identity from an identity. This public identity can be used by
 A secret identity.
 <br><br>
 
-```ruby
-Tanker::Identity.upgrade_user_token(app_id, user_id, user_token) # => identity
-```
-Return a Tanker identity from Tanker v1 user Token. Tanker v1 used a user token, when migrating to Tanker v2 you should use this function to migrate you used tokens to identities. This identity is secret and must only be given to a user who has been authenticated by your application. This identity is used by the Tanker client SDK to open a Tanker session.
-
-**app_id**<br>
-The app ID. You can access it from the [Tanker dashboard](https://dashboard.tanker.io).
-
-**user_id**<br>
-The unique ID of a user in your application.
-
-**user_token**<br>
-The Tanker v1 user token.
-
 ## Usage example
 
 The server-side pseudo-code below demonstrates a typical flow to safely deliver identities to your users:
