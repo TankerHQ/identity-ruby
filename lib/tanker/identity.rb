@@ -120,20 +120,5 @@ module Tanker
     rescue KeyError # failed fetch
       raise ArgumentError.new('Not a valid Tanker identity')
     end
-
-    def self.upgrade_user_token(b64_app_id, user_id, user_token)
-      assert_string_values({
-        app_id: b64_app_id,
-        user_id: user_id,
-        user_token: user_token
-      })
-
-      identity = deserialize(user_token)
-      identity['target'] = 'user'
-      identity['trustchain_id'] = b64_app_id
-      identity['value'] = identity.delete('user_id')
-
-      serialize(identity)
-    end
   end
 end
