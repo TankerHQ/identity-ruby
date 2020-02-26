@@ -1,4 +1,6 @@
 # frozen_string_literal: true
+require 'base64'
+
 RSpec.describe Tanker::Identity do
   before(:all) do
     # Note: vectors below were generated with the Javascript SDK. We keep it to
@@ -58,17 +60,23 @@ RSpec.describe Tanker::Identity do
   end
 
   describe 'argument checking' do
-    before(:all) do
-      @not_string = 1234
-      @not_b64 = '&:,?'
-    end
-
     def corrupt(arr, pos, value)
       arr.dup.tap { |a| a[pos] = value }
     end
 
     def truncate_b64(arr, pos, bytesize)
       arr.dup.tap { |a| a[pos] = Base64.strict_encode64(Base64.strict_decode64(a[pos])[0..(bytesize - 1)]) }
+    end
+
+    def delete_key(identity, key)
+      Tanker::Identity.serialize(
+        Tanker::Identity.deserialize(identity).tap { |h| h.delete(key) }
+      )
+    end
+
+    before(:all) do
+      @not_string = 1234
+      @not_b64 = '&:,?'
     end
 
     it "raises if invalid argument when creating a permanent identity" do
@@ -99,6 +107,9 @@ RSpec.describe Tanker::Identity do
     it 'raises if invalid argument when getting a public identity' do
       expect { Tanker::Identity.get_public_identity(@not_string) }.to raise_exception(TypeError)
       expect { Tanker::Identity.get_public_identity(@not_b64) }.to raise_exception(ArgumentError)
+
+      corrupted_identity = delete_key(@permanent_identity, 'value')
+      expect { Tanker::Identity.get_public_identity(corrupted_identity) }.to raise_exception(ArgumentError)
     end
   end
 
