@@ -2,6 +2,12 @@
 
 Identity generation in Ruby for the [Tanker SDK](https://tanker.io/docs/latest).
 
+## Requirements
+
+This gem requires Ruby v2.5 or greater (transitive requirement from [rbnacl](https://github.com/crypto-rb/rbnacl)).
+
+If still on an older version of Ruby, use `tanker-identity` with the [`603b35f8` commit ref](https://github.com/TankerHQ/identity-ruby/tree/603b35f8e1ca889c4862e8f9c1e54632a38b32b6).
+
 ## Installation
 
 This project depends on the [rbnacl](https://github.com/crypto-rb/rbnacl) gem, which requires the [libsodium](https://download.libsodium.org/doc/) cryptographic library.
@@ -11,12 +17,14 @@ Before going further, please follow [instructions to install libsodium](https://
 Then, add this line to your application's Gemfile:
 
 ```ruby
-gem 'tanker-identity', git: 'https://github.com/TankerHQ/identity-ruby' #, tag: 'vX.Y.Z'
+gem 'tanker-identity', git: 'https://github.com/TankerHQ/identity-ruby' #, ref: '<commit>'
 ```
 
 Finally, execute:
 
-    $ bundle
+```shell
+bundle
+```
 
 ## API
 
