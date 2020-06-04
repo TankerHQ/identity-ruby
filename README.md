@@ -1,4 +1,8 @@
-# Identity [![Actions Status](https://github.com/TankerHQ/identity-ruby/workflows/Tests/badge.svg)](https://github.com/TankerHQ/identity-ruby/actions) [![codecov](https://codecov.io/gh/TankerHQ/identity-ruby/branch/master/graph/badge.svg)](https://codecov.io/gh/TankerHQ/identity-ruby)
+<a href="#readme"><img src="https://tanker.io/images/github-logo.png" alt="Tanker logo" width="180" /></a>
+
+# Identity SDK
+
+[![Actions Status](https://github.com/TankerHQ/identity-ruby/workflows/Tests/badge.svg)](https://github.com/TankerHQ/identity-ruby/actions) [![codecov](https://codecov.io/gh/TankerHQ/identity-ruby/branch/master/graph/badge.svg)](https://codecov.io/gh/TankerHQ/identity-ruby)
 
 Identity generation in Ruby for the [Tanker SDK](https://tanker.io/docs/latest).
 
