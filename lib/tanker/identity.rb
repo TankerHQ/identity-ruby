@@ -21,7 +21,13 @@ module Tanker
     def self.user_secret(hashed_user_id)
       random_bytes = Crypto.random_bytes(USER_SECRET_SIZE - 1)
       check = Crypto.generichash(random_bytes + hashed_user_id, Crypto::HASH_MIN_SIZE)
-      random_bytes + check[0]
+      check_byte = check[0..0]
+      if check_byte.is_a?(String)
+        # @type var check_byte: String
+        random_bytes + check_byte
+      else
+        raise RuntimeError.new("Invalid check byte from Crypto.generichash")
+      end
     end
 
     def self.assert_string_values(hash)
@@ -36,7 +42,12 @@ module Tanker
       block_nature = APP_CREATION_NATURE.chr(Encoding::ASCII_8BIT)
       none_author = 0.chr(Encoding::ASCII_8BIT) * AUTHOR_SIZE
       app_public_key = app_secret[-APP_PUBLIC_KEY_SIZE..-1]
-      Crypto.generichash(block_nature + none_author + app_public_key, BLOCK_HASH_SIZE)
+      if app_public_key.is_a?(String)
+        # @type var app_public_key: String
+        Crypto.generichash(block_nature + none_author + app_public_key, BLOCK_HASH_SIZE)
+      else
+        raise ArgumentError.new("Invalid app secret")
+      end
     end
 
     public

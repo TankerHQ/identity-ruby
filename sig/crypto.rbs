@@ -1,0 +1,20 @@
+module Tanker::Crypto
+  def self.generichash: (String input, Integer size) -> String
+
+  # We need this static method since a RbNaCl::SigningKey instance can't be
+  # directly initialized with a given private_signature_key
+  def self.sign_detached: (String message, String private_signature_key) -> String
+
+  def self.verify_sign_detached: (String message, String signature, String public_signature_key) -> void
+
+  def self.generate_signature_keypair: () -> Hash[Symbol, String]
+
+  def self.generate_encryption_keypair: () -> Hash[Symbol, String]
+
+  def self.random_bytes: (Integer size) -> String
+end
+
+class Tanker::Crypto::InvalidSignature < StandardError
+end
+
+Tanker::Crypto::HASH_MIN_SIZE: Integer

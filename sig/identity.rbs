@@ -1,21 +1,21 @@
 module Tanker::Identity
-  def self.hash_user_id: (untyped app_id, untyped user_id) -> untyped
+  def self.hash_user_id: (String app_id, String user_id) -> String
 
-  def self.user_secret: (untyped hashed_user_id) -> untyped
+  def self.user_secret: (String hashed_user_id) -> String
 
-  def self.assert_string_values: (untyped hash) -> untyped
+  def self.assert_string_values: (Hash[(String | Symbol), String] hash) -> void
 
-  def self.generate_app_id: (untyped app_secret) -> untyped
+  def self.generate_app_id: (String app_secret) -> String
 
-  def self.deserialize: (untyped b64_json) -> untyped
+  def self.deserialize: (String b64_json) -> Hash[String, String]
 
-  def self.serialize: (untyped hash) -> untyped
+  def self.serialize: (Hash[(String | Symbol), String] hash) -> String
 
-  def self.create_identity: (untyped b64_app_id, untyped b64_app_secret, untyped user_id) -> untyped
+  def self.create_identity: (String b64_app_id, String b64_app_secret, String user_id) -> String
 
-  def self.create_provisional_identity: (untyped b64_app_id, untyped email) -> untyped
+  def self.create_provisional_identity: (String b64_app_id, String email) -> String
 
-  def self.get_public_identity: (untyped serialized_identity) -> untyped
+  def self.get_public_identity: (String serialized_identity) -> String
 end
 
 Tanker::Identity::APP_CREATION_NATURE: ::Integer

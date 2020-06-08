@@ -1,12 +1,11 @@
 target :lib do
   signature "sig"
 
+  check "lib/tanker/crypto.rb"
   check "lib/tanker/identity.rb"
   check "lib/tanker/version.rb"
-  # ignore "lib/templates/*.rb"
 
-  # library "pathname", "set"       # Standard libraries
-  # library "strong_json"           # Gems
+  #library "base64", "json", "securerandom"
 end
 
 # target :spec do
