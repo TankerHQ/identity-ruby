@@ -4,7 +4,7 @@
 
 [![Actions Status](https://github.com/TankerHQ/identity-ruby/workflows/Tests/badge.svg)](https://github.com/TankerHQ/identity-ruby/actions) [![codecov](https://codecov.io/gh/TankerHQ/identity-ruby/branch/master/graph/badge.svg)](https://codecov.io/gh/TankerHQ/identity-ruby)
 
-Identity generation in Ruby for the [Tanker SDK](https://tanker.io/docs/latest).
+Identity generation in Ruby for the [Tanker SDK](https://docs.tanker.io/latest/).
 
 ## Requirements
 
