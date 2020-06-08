@@ -1,6 +1,7 @@
 target :lib do
   signature "sig"
 
+  check "lib/tanker/identity.rb"
   check "lib/tanker/version.rb"
   # ignore "lib/templates/*.rb"
 

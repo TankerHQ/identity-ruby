@@ -1,0 +1,31 @@
+module Tanker::Identity
+  def self.hash_user_id: (untyped app_id, untyped user_id) -> untyped
+
+  def self.user_secret: (untyped hashed_user_id) -> untyped
+
+  def self.assert_string_values: (untyped hash) -> untyped
+
+  def self.generate_app_id: (untyped app_secret) -> untyped
+
+  def self.deserialize: (untyped b64_json) -> untyped
+
+  def self.serialize: (untyped hash) -> untyped
+
+  def self.create_identity: (untyped b64_app_id, untyped b64_app_secret, untyped user_id) -> untyped
+
+  def self.create_provisional_identity: (untyped b64_app_id, untyped email) -> untyped
+
+  def self.get_public_identity: (untyped serialized_identity) -> untyped
+end
+
+Tanker::Identity::APP_CREATION_NATURE: ::Integer
+
+Tanker::Identity::APP_SECRET_SIZE: ::Integer
+
+Tanker::Identity::APP_PUBLIC_KEY_SIZE: ::Integer
+
+Tanker::Identity::AUTHOR_SIZE: ::Integer
+
+Tanker::Identity::BLOCK_HASH_SIZE: ::Integer
+
+Tanker::Identity::USER_SECRET_SIZE: ::Integer
