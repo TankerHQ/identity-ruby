@@ -1,3 +1,4 @@
+# typed: true
 require 'tanker/crypto'
 require 'base64'
 require 'json'
