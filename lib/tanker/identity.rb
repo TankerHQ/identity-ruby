@@ -12,51 +12,45 @@ module Tanker
     BLOCK_HASH_SIZE = 32
     USER_SECRET_SIZE = 32
 
+    extend T::Sig
+
     private
 
+    sig {params(app_id: String, user_id: String).returns(String)}
     def self.hash_user_id(app_id, user_id)
       binary_user_id = user_id.dup.force_encoding(Encoding::ASCII_8BIT)
       Crypto.generichash(binary_user_id + app_id, BLOCK_HASH_SIZE)
     end
 
+    sig {params(hashed_user_id: String).returns(String)}
     def self.user_secret(hashed_user_id)
       random_bytes = Crypto.random_bytes(USER_SECRET_SIZE - 1)
       check = Crypto.generichash(random_bytes + hashed_user_id, Crypto::HASH_MIN_SIZE)
       random_bytes + check[0]
     end
 
-    def self.assert_string_values(hash)
-      hash.each_pair do |key, value|
-        unless value.is_a?(String)
-          raise TypeError.new("expected #{key} to be a String but was a #{value.class}")
-        end
-      end
-    end
-
+    sig {params(app_secret: String).returns(String)}
     def self.generate_app_id(app_secret)
       block_nature = APP_CREATION_NATURE.chr(Encoding::ASCII_8BIT)
       none_author = 0.chr(Encoding::ASCII_8BIT) * AUTHOR_SIZE
       app_public_key = app_secret[-APP_PUBLIC_KEY_SIZE..-1]
-      Crypto.generichash(block_nature + none_author + app_public_key, BLOCK_HASH_SIZE)
+      Crypto.generichash(block_nature + none_author + T.must(app_public_key), BLOCK_HASH_SIZE)
     end
 
     public
 
+    sig {params(b64_json: String).returns(T::Hash[String, String])}
     def self.deserialize(b64_json)
       JSON.parse(Base64.strict_decode64(b64_json))
     end
 
+    sig {params(hash: T::Hash[T.any(String, Symbol), String]).returns(String)}
     def self.serialize(hash)
       Base64.strict_encode64(JSON.generate(hash))
     end
 
+    sig {params(b64_app_id: String, b64_app_secret: String, user_id: String).returns(String)}
     def self.create_identity(b64_app_id, b64_app_secret, user_id)
-      assert_string_values({
-        app_id: b64_app_id,
-        app_secret: b64_app_secret,
-        user_id: user_id
-      })
-
       app_id = Base64.strict_decode64(b64_app_id)
       app_secret = Base64.strict_decode64(b64_app_secret)
 
@@ -80,12 +74,8 @@ module Tanker
       })
     end
 
+    sig {params(b64_app_id: String, email: String).returns(String)}
     def self.create_provisional_identity(b64_app_id, email)
-      assert_string_values({
-        app_id: b64_app_id,
-        email: email
-      })
-
       app_id = Base64.strict_decode64(b64_app_id)
       raise ArgumentError.new("Invalid app_id") if app_id.bytesize != BLOCK_HASH_SIZE
 
@@ -103,9 +93,8 @@ module Tanker
       })
     end
 
+    sig {params(serialized_identity: String).returns(String)}
     def self.get_public_identity(serialized_identity)
-      assert_string_values({ identity: serialized_identity })
-
       identity = deserialize(serialized_identity)
 
       if identity['target'] == 'user'
