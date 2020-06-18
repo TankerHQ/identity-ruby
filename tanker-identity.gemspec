@@ -13,6 +13,8 @@ Gem::Specification.new do |spec|
   spec.description   = %q{Building blocks to add Tanker identity management to your application server}
   spec.homepage      = "https://github.com/TankerHQ/identity-ruby"
 
+  spec.license       = "Apache-2.0"
+
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
   # to allow pushing to a single host or delete this section to allow pushing to any host.
   if spec.respond_to?(:metadata)
