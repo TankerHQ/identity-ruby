@@ -1,0 +1,25 @@
+name: Install
+on:
+  schedule:
+    - cron:  '0 1 * * *'
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby-version: [2.5, 2.6, 2.7]
+    steps:
+      - name: Set up Ruby ${{ matrix.ruby-version }}
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+      - name: Install dependencies
+        run: sudo apt install -y libsodium23
+      - name: Install bundler
+        run: gem install bundler
+      - name: Install gem
+        run: |
+          bundle init
+          bundle add tanker-identity --git https://github.com/TankerHQ/identity-ruby
+          bundle exec ruby -e "require 'tanker-identity'; Tanker::Identity.create_provisional_identity('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=', 'test@tanker.io')"
