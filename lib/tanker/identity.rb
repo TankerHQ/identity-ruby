@@ -1,4 +1,5 @@
 require 'tanker/crypto'
+require 'tanker/version'
 require 'base64'
 require 'json'
 

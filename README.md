@@ -73,7 +73,7 @@ A secret identity.
 The server-side pseudo-code below demonstrates a typical flow to safely deliver identities to your users:
 
 ```ruby
-require 'tanker-identity'
+require 'tanker/identity'
 
 # 1. store these configurations in a safe place
 app_id = '<app-id>'

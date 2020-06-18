@@ -5,7 +5,7 @@ require 'codecov'
 SimpleCov.formatter = SimpleCov::Formatter::Codecov
 
 require 'bundler/setup'
-require 'tanker-identity'
+require 'tanker/identity'
 
 module Helpers
   # Note: this was generated with the Javascript SDK. We keep it to check Javascript
