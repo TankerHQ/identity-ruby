@@ -1,2 +1,3 @@
 require 'tanker/identity'
-require 'tanker/version'
+
+warn "DEPRECATION WARNING: Using `require 'tanker-identity'` is deprecated in favor of `require 'tanker/identity'`"
