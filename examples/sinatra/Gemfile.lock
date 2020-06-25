@@ -2,17 +2,17 @@ PATH
   remote: ../..
   specs:
     tanker-identity (0.1.0)
-      rbnacl (~> 6.0.1)
+      rbnacl (~> 7.0)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    ffi (1.10.0)
+    ffi (1.13.1)
     mustermann (1.0.3)
-    rack (2.0.8)
+    rack (2.2.3)
     rack-protection (2.0.7)
       rack
-    rbnacl (6.0.1)
+    rbnacl (7.1.1)
       ffi
     sinatra (2.0.7)
       mustermann (~> 1.0)
