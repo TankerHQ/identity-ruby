@@ -2,22 +2,24 @@ PATH
   remote: ../..
   specs:
     tanker-identity (0.1.0)
-      rbnacl (~> 6.0.1)
+      rbnacl (~> 7.0)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    ffi (1.10.0)
-    mustermann (1.0.3)
-    rack (2.0.8)
-    rack-protection (2.0.7)
+    ffi (1.13.1)
+    mustermann (1.1.1)
+      ruby2_keywords (~> 0.0.1)
+    rack (2.2.3)
+    rack-protection (2.0.8.1)
       rack
-    rbnacl (6.0.1)
+    rbnacl (7.1.1)
       ffi
-    sinatra (2.0.7)
+    ruby2_keywords (0.0.2)
+    sinatra (2.0.8.1)
       mustermann (~> 1.0)
       rack (~> 2.0)
-      rack-protection (= 2.0.7)
+      rack-protection (= 2.0.8.1)
       tilt (~> 2.0)
     sinatra-cross_origin (0.4.0)
     tilt (2.0.10)
@@ -26,9 +28,9 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  sinatra (~> 2.0.7)
+  sinatra (~> 2.0.8)
   sinatra-cross_origin (~> 0.4.0)
   tanker-identity!
 
 BUNDLED WITH
-   2.1.2
+   2.1.4
