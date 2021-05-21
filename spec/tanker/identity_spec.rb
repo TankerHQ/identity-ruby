@@ -15,6 +15,16 @@ RSpec.describe Tanker::Identity do
     @public_provisional_identity = 'eyJ0cnVzdGNoYWluX2lkIjoidHBveHlOemgwaFU5RzJpOWFnTXZIeXlkK3BPNnpHQ2pPOUJmaHJDTGpkND0iLCJ0YXJnZXQiOiJlbWFpbCIsInZhbHVlIjoiYnJlbmRhbi5laWNoQHRhbmtlci5pbyIsInB1YmxpY19lbmNyeXB0aW9uX2tleSI6Ii8yajRkSTNyOFBsdkNOM3VXNEhoQTV3QnRNS09jQUNkMzhLNk4wcSttRlU9IiwicHVibGljX3NpZ25hdHVyZV9rZXkiOiJXN1FFUUJ1OUZYY1hJcE9ncTYydFB3Qml5RkFicFQxckFydUQwaC9OclRBPSJ9'
   end
 
+  describe 'format' do
+    it 'can serialize to ordered json base64' do
+      object = { c: 2, b: nil, a: { x: 'y' } }
+      expected_json = '{"a":{"x":"y"},"b":null,"c":2}'
+      b64json = Tanker::Identity.serialize(object)
+      json = Base64.strict_decode64(b64json)
+      expect(json).to eq(expected_json)
+    end
+  end
+
   describe 'parse' do
     it 'a valid permanent identity' do
       identity = Tanker::Identity.deserialize(@permanent_identity)

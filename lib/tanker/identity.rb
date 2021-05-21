@@ -46,8 +46,22 @@ module Tanker
       JSON.parse(Base64.strict_decode64(b64_json))
     end
 
+    def self.to_ordered_json(hash)
+      keys = hash.keys.sort
+      json = []
+      keys.each do |k|
+        val = if hash[k].class == Hash
+                to_ordered_json(hash[k])
+              else
+                JSON.generate(hash[k])
+              end
+        json.push("\"#{k}\":#{val}")
+      end
+      "{#{json.join(',')}}"
+    end
+
     def self.serialize(hash)
-      Base64.strict_encode64(JSON.generate(hash))
+      Base64.strict_encode64(to_ordered_json(hash))
     end
 
     def self.create_identity(b64_app_id, b64_app_secret, user_id)
@@ -108,11 +122,11 @@ module Tanker
 
       identity = deserialize(serialized_identity)
 
-      if identity['target'] == 'user'
-        public_keys = ['trustchain_id', 'target', 'value']
-      else
-        public_keys = ['trustchain_id', 'target', 'value', 'public_encryption_key', 'public_signature_key']
-      end
+      public_keys = if identity['target'] == 'user'
+                      ['trustchain_id', 'target', 'value']
+                    else
+                      ['trustchain_id', 'target', 'value', 'public_encryption_key', 'public_signature_key']
+                    end
 
       public_identity = {}
       public_keys.each { |key| public_identity[key] = identity.fetch(key) }
