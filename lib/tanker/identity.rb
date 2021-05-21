@@ -64,6 +64,12 @@ module Tanker
       Base64.strict_encode64(to_ordered_json(hash))
     end
 
+    def self.upgrade_identity(serialized_identity)
+      assert_string_values({ identity: serialized_identity })
+
+      serialize(deserialize(serialized_identity))
+    end
+
     def self.create_identity(b64_app_id, b64_app_secret, user_id)
       assert_string_values({
         app_id: b64_app_id,
