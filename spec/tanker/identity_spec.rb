@@ -167,7 +167,7 @@ RSpec.describe Tanker::Identity do
     end
 
     it 'returns a provisional identity' do
-      expect(@identity.keys.sort).to eq ['private_encryption_key', 'private_signature_key', 'public_encryption_key', 'public_signature_key', 'target', 'trustchain_id', 'value']
+      expect(@identity.keys.sort).to eq ['private_encryption_key', 'private_salt', 'private_signature_key', 'public_encryption_key', 'public_signature_key', 'target', 'trustchain_id', 'value']
       expect(@identity['trustchain_id']).to eq @app[:id]
       expect(@identity['target']).to eq 'email'
       expect(@identity['value']).to eq @user_email
