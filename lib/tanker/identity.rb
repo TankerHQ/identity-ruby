@@ -91,11 +91,13 @@ module Tanker
 
       encryption_keypair = Crypto.generate_encryption_keypair
       signature_keypair = Crypto.generate_signature_keypair
+      private_salt = Crypto.random_bytes(16)
 
       serialize({
         trustchain_id: b64_app_id,
         target: 'email',
         value: email,
+        private_salt: Base64.strict_encode64(private_salt),
         public_encryption_key: Base64.strict_encode64(encryption_keypair[:public_key]),
         private_encryption_key: Base64.strict_encode64(encryption_keypair[:private_key]),
         public_signature_key: Base64.strict_encode64(signature_keypair[:public_key]),
@@ -108,14 +110,19 @@ module Tanker
 
       identity = deserialize(serialized_identity)
 
-      if identity['target'] == 'user'
-        public_keys = ['trustchain_id', 'target', 'value']
-      else
-        public_keys = ['trustchain_id', 'target', 'value', 'public_encryption_key', 'public_signature_key']
-      end
+      public_keys = if identity['target'] == 'user'
+                      ['trustchain_id', 'target']
+                    else
+                      ['trustchain_id', 'target', 'public_encryption_key', 'public_signature_key']
+                    end
 
       public_identity = {}
       public_keys.each { |key| public_identity[key] = identity.fetch(key) }
+      if identity['target'].start_with?('hashed_')
+        public_identity['value'] = Crypto.generichash(identity.fetch('private_salt') + identity.fetch('value'), BLOCK_HASH_SIZE)
+      else
+        public_identity['value'] = identity.fetch('value')
+      end
 
       serialize(public_identity)
     rescue KeyError # failed fetch
