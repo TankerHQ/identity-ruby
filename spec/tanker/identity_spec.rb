@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'base64'
 
 RSpec.describe Tanker::Identity do
@@ -11,8 +12,87 @@ RSpec.describe Tanker::Identity do
     @hashed_user_id = 'RDa0eq4XNuj5tV7hdapjOxhmheTh4QBDNpy4Svy9Xok='
     @permanent_identity = 'eyJ0cnVzdGNoYWluX2lkIjoidHBveHlOemgwaFU5RzJpOWFnTXZIeXlkK3BPNnpHQ2pPOUJmaHJDTGpkND0iLCJ0YXJnZXQiOiJ1c2VyIiwidmFsdWUiOiJSRGEwZXE0WE51ajV0VjdoZGFwak94aG1oZVRoNFFCRE5weTRTdnk5WG9rPSIsImRlbGVnYXRpb25fc2lnbmF0dXJlIjoiVTlXUW9sQ3ZSeWpUOG9SMlBRbWQxV1hOQ2kwcW1MMTJoTnJ0R2FiWVJFV2lyeTUya1d4MUFnWXprTHhINmdwbzNNaUE5cisremhubW9ZZEVKMCtKQ3c9PSIsImVwaGVtZXJhbF9wdWJsaWNfc2lnbmF0dXJlX2tleSI6IlhoM2kweERUcHIzSFh0QjJRNTE3UUt2M2F6TnpYTExYTWRKRFRTSDRiZDQ9IiwiZXBoZW1lcmFsX3ByaXZhdGVfc2lnbmF0dXJlX2tleSI6ImpFRFQ0d1FDYzFERndvZFhOUEhGQ2xuZFRQbkZ1Rm1YaEJ0K2lzS1U0WnBlSGVMVEVOT212Y2RlMEhaRG5YdEFxL2RyTTNOY3N0Y3gwa05OSWZodDNnPT0iLCJ1c2VyX3NlY3JldCI6IjdGU2YvbjBlNzZRVDNzMERrdmV0UlZWSmhYWkdFak94ajVFV0FGZXh2akk9In0='
     @provisional_identity = 'eyJ0cnVzdGNoYWluX2lkIjoidHBveHlOemgwaFU5RzJpOWFnTXZIeXlkK3BPNnpHQ2pPOUJmaHJDTGpkND0iLCJ0YXJnZXQiOiJlbWFpbCIsInZhbHVlIjoiYnJlbmRhbi5laWNoQHRhbmtlci5pbyIsInB1YmxpY19lbmNyeXB0aW9uX2tleSI6Ii8yajRkSTNyOFBsdkNOM3VXNEhoQTV3QnRNS09jQUNkMzhLNk4wcSttRlU9IiwicHJpdmF0ZV9lbmNyeXB0aW9uX2tleSI6IjRRQjVUV212Y0JyZ2V5RERMaFVMSU5VNnRicUFPRVE4djlwakRrUGN5YkE9IiwicHVibGljX3NpZ25hdHVyZV9rZXkiOiJXN1FFUUJ1OUZYY1hJcE9ncTYydFB3Qml5RkFicFQxckFydUQwaC9OclRBPSIsInByaXZhdGVfc2lnbmF0dXJlX2tleSI6IlVtbll1dmRUYUxZRzBhK0phRHBZNm9qdzQvMkxsOHpzbXJhbVZDNGZ1cVJidEFSQUc3MFZkeGNpazZDcnJhMC9BR0xJVUJ1bFBXc0N1NFBTSDgydE1BPT0ifQ=='
-    @public_identity = 'eyJ0YXJnZXQiOiJ1c2VyIiwidHJ1c3RjaGFpbl9pZCI6InRwb3h5TnpoMGhVOUcyaTlhZ012SHl5ZCtwTzZ6R0NqTzlCZmhyQ0xqZDQ9IiwidmFsdWUiOiJSRGEwZXE0WE51ajV0VjdoZGFwak94aG1oZVRoNFFCRE5weTRTdnk5WG9rPSJ9'
+    @public_identity = 'eyJ0cnVzdGNoYWluX2lkIjoidHBveHlOemgwaFU5RzJpOWFnTXZIeXlkK3BPNnpHQ2pPOUJmaHJDTGpkND0iLCJ0YXJnZXQiOiJ1c2VyIiwidmFsdWUiOiJSRGEwZXE0WE51ajV0VjdoZGFwak94aG1oZVRoNFFCRE5weTRTdnk5WG9rPSJ9'
     @public_provisional_identity = 'eyJ0cnVzdGNoYWluX2lkIjoidHBveHlOemgwaFU5RzJpOWFnTXZIeXlkK3BPNnpHQ2pPOUJmaHJDTGpkND0iLCJ0YXJnZXQiOiJlbWFpbCIsInZhbHVlIjoiYnJlbmRhbi5laWNoQHRhbmtlci5pbyIsInB1YmxpY19lbmNyeXB0aW9uX2tleSI6Ii8yajRkSTNyOFBsdkNOM3VXNEhoQTV3QnRNS09jQUNkMzhLNk4wcSttRlU9IiwicHVibGljX3NpZ25hdHVyZV9rZXkiOiJXN1FFUUJ1OUZYY1hJcE9ncTYydFB3Qml5RkFicFQxckFydUQwaC9OclRBPSJ9'
+  end
+
+  describe 'format' do
+    it 'create_identity serializes all fields and in the right order' do
+      b64_identity = Tanker::Identity.create_identity(@app[:id], @app[:secret], @user_id)
+      identity = Tanker::Identity.deserialize(b64_identity)
+      expect(identity.keys).to eq(%w[trustchain_id target value delegation_signature ephemeral_public_signature_key ephemeral_private_signature_key user_secret])
+    end
+
+    it 'get_public_identity on a permanent identity serializes all fields and in the right order' do
+      b64_full_identity = Tanker::Identity.create_identity(@app[:id], @app[:secret], @user_id)
+      b64_identity = Tanker::Identity.get_public_identity(b64_full_identity)
+      identity = Tanker::Identity.deserialize(b64_identity)
+      expect(identity.keys).to eq(%w[trustchain_id target value])
+    end
+
+    it 'create_provisional_identity serializes all fields and in the right order' do
+      b64_identity = Tanker::Identity.create_provisional_identity(@app[:id], 'brendan.eich@tanker.io')
+      identity = Tanker::Identity.deserialize(b64_identity)
+      expect(identity.keys).to eq(%w[trustchain_id target value public_encryption_key private_encryption_key public_signature_key private_signature_key])
+    end
+
+    it 'get_public_identity on a provisional identity serializes all fields and in the right order' do
+      b64_full_identity = Tanker::Identity.create_provisional_identity(@app[:id], 'brendan.eich@tanker.io')
+      b64_identity = Tanker::Identity.get_public_identity(b64_full_identity)
+      identity = Tanker::Identity.deserialize(b64_identity)
+      expect(identity.keys).to eq(%w[trustchain_id target value public_encryption_key public_signature_key])
+    end
+
+    it 'matches the frozen secret permanent identity test vector' do
+      identity_obj = {
+        trustchain_id: 'tpoxyNzh0hU9G2i9agMvHyyd+pO6zGCjO9BfhrCLjd4=',
+        target: 'user',
+        value: @hashed_user_id,
+        delegation_signature: 'U9WQolCvRyjT8oR2PQmd1WXNCi0qmL12hNrtGabYREWiry52kWx1AgYzkLxH6gpo3MiA9r++zhnmoYdEJ0+JCw==',
+        ephemeral_public_signature_key: 'Xh3i0xDTpr3HXtB2Q517QKv3azNzXLLXMdJDTSH4bd4=',
+        ephemeral_private_signature_key:
+          'jEDT4wQCc1DFwodXNPHFClndTPnFuFmXhBt+isKU4ZpeHeLTENOmvcde0HZDnXtAq/drM3Ncstcx0kNNIfht3g==',
+        user_secret: '7FSf/n0e76QT3s0DkvetRVVJhXZGEjOxj5EWAFexvjI=',
+      }
+      identity = Tanker::Identity.serialize(identity_obj)
+      expect(identity).to eq(@permanent_identity)
+    end
+
+    it 'matches the frozen public permanent identity test vector' do
+      identity_obj = {
+        trustchain_id: 'tpoxyNzh0hU9G2i9agMvHyyd+pO6zGCjO9BfhrCLjd4=',
+        target: 'user',
+        value: @hashed_user_id
+      }
+      identity = Tanker::Identity.serialize(identity_obj)
+      expect(identity).to eq(@public_identity)
+    end
+
+    it 'matches the frozen secret provisional identity test vector' do
+      identity_obj = {
+        trustchain_id: 'tpoxyNzh0hU9G2i9agMvHyyd+pO6zGCjO9BfhrCLjd4=',
+        target: 'email',
+        value: 'brendan.eich@tanker.io',
+        public_encryption_key: '/2j4dI3r8PlvCN3uW4HhA5wBtMKOcACd38K6N0q+mFU=',
+        private_encryption_key: '4QB5TWmvcBrgeyDDLhULINU6tbqAOEQ8v9pjDkPcybA=',
+        public_signature_key: 'W7QEQBu9FXcXIpOgq62tPwBiyFAbpT1rAruD0h/NrTA=',
+        private_signature_key: 'UmnYuvdTaLYG0a+JaDpY6ojw4/2Ll8zsmramVC4fuqRbtARAG70Vdxcik6Crra0/AGLIUBulPWsCu4PSH82tMA==',
+      }
+      identity = Tanker::Identity.serialize(identity_obj)
+      expect(identity).to eq(@provisional_identity)
+    end
+
+    it 'matches the frozen public provisional identity test vector' do
+      identity_obj = {
+        trustchain_id: 'tpoxyNzh0hU9G2i9agMvHyyd+pO6zGCjO9BfhrCLjd4=',
+        target: 'email',
+        value: 'brendan.eich@tanker.io',
+        public_encryption_key: '/2j4dI3r8PlvCN3uW4HhA5wBtMKOcACd38K6N0q+mFU=',
+        public_signature_key: 'W7QEQBu9FXcXIpOgq62tPwBiyFAbpT1rAruD0h/NrTA=',
+      }
+      identity = Tanker::Identity.serialize(identity_obj)
+      expect(identity).to eq(@public_provisional_identity)
+    end
   end
 
   describe 'parse' do
@@ -132,9 +212,9 @@ RSpec.describe Tanker::Identity do
       signature = Base64.decode64(identity['delegation_signature'])
       public_key = Base64.decode64(app_public_key)
 
-      expect {
+      expect do
         Tanker::Crypto.verify_sign_detached(signed_data, signature, public_key)
-      }.not_to raise_exception # no Tanker::Crypto::InvalidSignature
+      end.not_to raise_exception # no Tanker::Crypto::InvalidSignature
     end
 
     before(:all) do
