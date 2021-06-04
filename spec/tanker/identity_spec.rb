@@ -9,11 +9,13 @@ RSpec.describe Tanker::Identity do
     @app = test_app
     @user_id = 'b_eich'
     @user_email = 'brendan.eich@tanker.io'
+    @hashed_email = '0u2c8w8EIZWT2FzRN/yyM5qIbEGYTNDT5SkWVBu20Qo='
     @hashed_user_id = 'RDa0eq4XNuj5tV7hdapjOxhmheTh4QBDNpy4Svy9Xok='
     @permanent_identity = 'eyJ0cnVzdGNoYWluX2lkIjoidHBveHlOemgwaFU5RzJpOWFnTXZIeXlkK3BPNnpHQ2pPOUJmaHJDTGpkND0iLCJ0YXJnZXQiOiJ1c2VyIiwidmFsdWUiOiJSRGEwZXE0WE51ajV0VjdoZGFwak94aG1oZVRoNFFCRE5weTRTdnk5WG9rPSIsImRlbGVnYXRpb25fc2lnbmF0dXJlIjoiVTlXUW9sQ3ZSeWpUOG9SMlBRbWQxV1hOQ2kwcW1MMTJoTnJ0R2FiWVJFV2lyeTUya1d4MUFnWXprTHhINmdwbzNNaUE5cisremhubW9ZZEVKMCtKQ3c9PSIsImVwaGVtZXJhbF9wdWJsaWNfc2lnbmF0dXJlX2tleSI6IlhoM2kweERUcHIzSFh0QjJRNTE3UUt2M2F6TnpYTExYTWRKRFRTSDRiZDQ9IiwiZXBoZW1lcmFsX3ByaXZhdGVfc2lnbmF0dXJlX2tleSI6ImpFRFQ0d1FDYzFERndvZFhOUEhGQ2xuZFRQbkZ1Rm1YaEJ0K2lzS1U0WnBlSGVMVEVOT212Y2RlMEhaRG5YdEFxL2RyTTNOY3N0Y3gwa05OSWZodDNnPT0iLCJ1c2VyX3NlY3JldCI6IjdGU2YvbjBlNzZRVDNzMERrdmV0UlZWSmhYWkdFak94ajVFV0FGZXh2akk9In0='
     @provisional_identity = 'eyJ0cnVzdGNoYWluX2lkIjoidHBveHlOemgwaFU5RzJpOWFnTXZIeXlkK3BPNnpHQ2pPOUJmaHJDTGpkND0iLCJ0YXJnZXQiOiJlbWFpbCIsInZhbHVlIjoiYnJlbmRhbi5laWNoQHRhbmtlci5pbyIsInB1YmxpY19lbmNyeXB0aW9uX2tleSI6Ii8yajRkSTNyOFBsdkNOM3VXNEhoQTV3QnRNS09jQUNkMzhLNk4wcSttRlU9IiwicHJpdmF0ZV9lbmNyeXB0aW9uX2tleSI6IjRRQjVUV212Y0JyZ2V5RERMaFVMSU5VNnRicUFPRVE4djlwakRrUGN5YkE9IiwicHVibGljX3NpZ25hdHVyZV9rZXkiOiJXN1FFUUJ1OUZYY1hJcE9ncTYydFB3Qml5RkFicFQxckFydUQwaC9OclRBPSIsInByaXZhdGVfc2lnbmF0dXJlX2tleSI6IlVtbll1dmRUYUxZRzBhK0phRHBZNm9qdzQvMkxsOHpzbXJhbVZDNGZ1cVJidEFSQUc3MFZkeGNpazZDcnJhMC9BR0xJVUJ1bFBXc0N1NFBTSDgydE1BPT0ifQ=='
     @public_identity = 'eyJ0cnVzdGNoYWluX2lkIjoidHBveHlOemgwaFU5RzJpOWFnTXZIeXlkK3BPNnpHQ2pPOUJmaHJDTGpkND0iLCJ0YXJnZXQiOiJ1c2VyIiwidmFsdWUiOiJSRGEwZXE0WE51ajV0VjdoZGFwak94aG1oZVRoNFFCRE5weTRTdnk5WG9rPSJ9'
-    @public_provisional_identity = 'eyJ0cnVzdGNoYWluX2lkIjoidHBveHlOemgwaFU5RzJpOWFnTXZIeXlkK3BPNnpHQ2pPOUJmaHJDTGpkND0iLCJ0YXJnZXQiOiJlbWFpbCIsInZhbHVlIjoiYnJlbmRhbi5laWNoQHRhbmtlci5pbyIsInB1YmxpY19lbmNyeXB0aW9uX2tleSI6Ii8yajRkSTNyOFBsdkNOM3VXNEhoQTV3QnRNS09jQUNkMzhLNk4wcSttRlU9IiwicHVibGljX3NpZ25hdHVyZV9rZXkiOiJXN1FFUUJ1OUZYY1hJcE9ncTYydFB3Qml5RkFicFQxckFydUQwaC9OclRBPSJ9'
+    @old_public_provisional_identity = 'eyJ0cnVzdGNoYWluX2lkIjoidHBveHlOemgwaFU5RzJpOWFnTXZIeXlkK3BPNnpHQ2pPOUJmaHJDTGpkND0iLCJ0YXJnZXQiOiJlbWFpbCIsInZhbHVlIjoiYnJlbmRhbi5laWNoQHRhbmtlci5pbyIsInB1YmxpY19lbmNyeXB0aW9uX2tleSI6Ii8yajRkSTNyOFBsdkNOM3VXNEhoQTV3QnRNS09jQUNkMzhLNk4wcSttRlU9IiwicHVibGljX3NpZ25hdHVyZV9rZXkiOiJXN1FFUUJ1OUZYY1hJcE9ncTYydFB3Qml5RkFicFQxckFydUQwaC9OclRBPSJ9'
+    @public_provisional_identity = 'eyJ0cnVzdGNoYWluX2lkIjoidHBveHlOemgwaFU5RzJpOWFnTXZIeXlkK3BPNnpHQ2pPOUJmaHJDTGpkND0iLCJ0YXJnZXQiOiJoYXNoZWRfZW1haWwiLCJ2YWx1ZSI6IjB1MmM4dzhFSVpXVDJGelJOL3l5TTVxSWJFR1lUTkRUNVNrV1ZCdTIwUW89IiwicHVibGljX2VuY3J5cHRpb25fa2V5IjoiLzJqNGRJM3I4UGx2Q04zdVc0SGhBNXdCdE1LT2NBQ2QzOEs2TjBxK21GVT0iLCJwdWJsaWNfc2lnbmF0dXJlX2tleSI6Ilc3UUVRQnU5RlhjWElwT2dxNjJ0UHdCaXlGQWJwVDFyQXJ1RDBoL05yVEE9In0='
   end
 
   describe 'format' do
@@ -82,7 +84,7 @@ RSpec.describe Tanker::Identity do
       expect(identity).to eq(@provisional_identity)
     end
 
-    it 'matches the frozen public provisional identity test vector' do
+    it 'matches the unhashed frozen public provisional identity test vector' do
       identity_obj = {
         trustchain_id: 'tpoxyNzh0hU9G2i9agMvHyyd+pO6zGCjO9BfhrCLjd4=',
         target: 'email',
@@ -91,7 +93,23 @@ RSpec.describe Tanker::Identity do
         public_signature_key: 'W7QEQBu9FXcXIpOgq62tPwBiyFAbpT1rAruD0h/NrTA=',
       }
       identity = Tanker::Identity.serialize(identity_obj)
+      expect(identity).to eq(@old_public_provisional_identity)
+    end
+
+    it 'matches the hashed frozen public provisional identity test vector' do
+      identity_obj = {
+        trustchain_id: 'tpoxyNzh0hU9G2i9agMvHyyd+pO6zGCjO9BfhrCLjd4=',
+        target: 'hashed_email',
+        value: @hashed_email,
+        public_encryption_key: '/2j4dI3r8PlvCN3uW4HhA5wBtMKOcACd38K6N0q+mFU=',
+        public_signature_key: 'W7QEQBu9FXcXIpOgq62tPwBiyFAbpT1rAruD0h/NrTA=',
+      }
+      identity = Tanker::Identity.serialize(identity_obj)
       expect(identity).to eq(@public_provisional_identity)
+    end
+
+    it 'can upgrade to a hashed public provisional identity' do
+      expect(Tanker::Identity.upgrade_identity(@old_public_provisional_identity)).to eq(@public_provisional_identity)
     end
   end
 
@@ -128,12 +146,22 @@ RSpec.describe Tanker::Identity do
       expect(identity['value']).to eq(@hashed_user_id)
     end
 
-    it 'a valid public provisional identity' do
-      identity = Tanker::Identity.deserialize(@public_provisional_identity)
+    it 'a valid non-hashed public provisional identity' do
+      identity = Tanker::Identity.deserialize(@old_public_provisional_identity)
 
       expect(identity['trustchain_id']).to eq(@app[:id])
       expect(identity['target']).to eq('email')
       expect(identity['value']).to eq(@user_email)
+      expect(identity['public_signature_key']).to eq('W7QEQBu9FXcXIpOgq62tPwBiyFAbpT1rAruD0h/NrTA=')
+      expect(identity['public_encryption_key']).to eq('/2j4dI3r8PlvCN3uW4HhA5wBtMKOcACd38K6N0q+mFU=')
+    end
+
+    it 'a valid hashed public provisional identity' do
+      identity = Tanker::Identity.deserialize(@public_provisional_identity)
+
+      expect(identity['trustchain_id']).to eq(@app[:id])
+      expect(identity['target']).to eq('hashed_email')
+      expect(identity['value']).to eq(@hashed_email)
       expect(identity['public_signature_key']).to eq('W7QEQBu9FXcXIpOgq62tPwBiyFAbpT1rAruD0h/NrTA=')
       expect(identity['public_encryption_key']).to eq('/2j4dI3r8PlvCN3uW4HhA5wBtMKOcACd38K6N0q+mFU=')
     end
@@ -256,11 +284,10 @@ RSpec.describe Tanker::Identity do
     it 'returns a public identity from a provisional identity' do
       b64_public_identity = Tanker::Identity.get_public_identity(@b64_identity)
       public_identity = Tanker::Identity.deserialize(b64_public_identity)
-      hashed_email = Base64.strict_encode64(Tanker::Crypto.generichash(@user_email, Tanker::Identity::BLOCK_HASH_SIZE))
       expect(public_identity.keys.sort).to eq ['public_encryption_key', 'public_signature_key', 'target', 'trustchain_id', 'value']
       expect(public_identity['trustchain_id']).to eq @app[:id]
       expect(public_identity['target']).to eq 'email'
-      expect(public_identity['value']).to eq hashed_email
+      expect(public_identity['value']).to eq @hashed_email
       expect(public_identity['public_encryption_key']).to eq @identity['public_encryption_key']
       expect(public_identity['public_signature_key']).to eq @identity['public_signature_key']
     end
