@@ -256,10 +256,11 @@ RSpec.describe Tanker::Identity do
     it 'returns a public identity from a provisional identity' do
       b64_public_identity = Tanker::Identity.get_public_identity(@b64_identity)
       public_identity = Tanker::Identity.deserialize(b64_public_identity)
+      hashed_email = Base64.strict_encode64(Tanker::Crypto.generichash(@user_email, Tanker::Identity::BLOCK_HASH_SIZE))
       expect(public_identity.keys.sort).to eq ['public_encryption_key', 'public_signature_key', 'target', 'trustchain_id', 'value']
       expect(public_identity['trustchain_id']).to eq @app[:id]
       expect(public_identity['target']).to eq 'email'
-      expect(public_identity['value']).to eq @user_email
+      expect(public_identity['value']).to eq hashed_email
       expect(public_identity['public_encryption_key']).to eq @identity['public_encryption_key']
       expect(public_identity['public_signature_key']).to eq @identity['public_signature_key']
     end
