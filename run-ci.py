@@ -6,6 +6,7 @@ import sys
 
 
 import tankerci
+import tankerci.git
 import tankerci.bump
 
 

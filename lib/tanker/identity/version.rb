@@ -1,6 +1,6 @@
 module Tanker
   module Identity
-    VERSION = '0.1.0'
+    VERSION = '0.0.1'
   end
 
   def self.const_missing(name)
