@@ -33,13 +33,13 @@ RSpec.describe Tanker::Identity do
     end
 
     it 'create_provisional_identity serializes all fields and in the right order' do
-      b64_identity = Tanker::Identity.create_provisional_identity(@app[:id], 'brendan.eich@tanker.io')
+      b64_identity = Tanker::Identity.create_provisional_identity(@app[:id], 'email', 'brendan.eich@tanker.io')
       identity = Tanker::Identity.deserialize(b64_identity)
       expect(identity.keys).to eq(%w[trustchain_id target value public_encryption_key private_encryption_key public_signature_key private_signature_key])
     end
 
     it 'get_public_identity on a provisional identity serializes all fields and in the right order' do
-      b64_full_identity = Tanker::Identity.create_provisional_identity(@app[:id], 'brendan.eich@tanker.io')
+      b64_full_identity = Tanker::Identity.create_provisional_identity(@app[:id], 'email', 'brendan.eich@tanker.io')
       b64_identity = Tanker::Identity.get_public_identity(b64_full_identity)
       identity = Tanker::Identity.deserialize(b64_identity)
       expect(identity.keys).to eq(%w[trustchain_id target value public_encryption_key public_signature_key])
@@ -205,7 +205,7 @@ RSpec.describe Tanker::Identity do
     end
 
     it 'raises if invalid argument when creating a provisional identity' do
-      args = [@app[:id], @user_email]
+      args = [@app[:id], 'email', @user_email]
       expect { Tanker::Identity.create_provisional_identity(*corrupt(args, 0, @not_string)) }.to raise_exception(TypeError)
       expect { Tanker::Identity.create_provisional_identity(*corrupt(args, 1, @not_string)) }.to raise_exception(TypeError)
       expect { Tanker::Identity.create_provisional_identity(*corrupt(args, 0, @not_b64)) }.to raise_exception(ArgumentError)
@@ -270,7 +270,7 @@ RSpec.describe Tanker::Identity do
 
   describe 'provisional identity' do
     before(:all) do
-      @b64_identity = Tanker::Identity.create_provisional_identity(@app[:id], @user_email)
+      @b64_identity = Tanker::Identity.create_provisional_identity(@app[:id], 'email', @user_email)
       @identity = Tanker::Identity.deserialize(@b64_identity)
     end
 
