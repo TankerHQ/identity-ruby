@@ -118,7 +118,7 @@ module Tanker
       public_keys.each { |key| public_identity[key] = identity.fetch(key) }
 
       if identity['target'] == 'email'
-        identity['target'] = 'hashed_email'
+        public_identity['target'] = 'hashed_email'
         public_identity['value'] = Base64.strict_encode64(Crypto.generichash(public_identity['value'], BLOCK_HASH_SIZE))
       end
 

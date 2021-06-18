@@ -286,7 +286,7 @@ RSpec.describe Tanker::Identity do
       public_identity = Tanker::Identity.deserialize(b64_public_identity)
       expect(public_identity.keys.sort).to eq ['public_encryption_key', 'public_signature_key', 'target', 'trustchain_id', 'value']
       expect(public_identity['trustchain_id']).to eq @app[:id]
-      expect(public_identity['target']).to eq 'email'
+      expect(public_identity['target']).to eq 'hashed_email'
       expect(public_identity['value']).to eq @hashed_email
       expect(public_identity['public_encryption_key']).to eq @identity['public_encryption_key']
       expect(public_identity['public_signature_key']).to eq @identity['public_signature_key']
