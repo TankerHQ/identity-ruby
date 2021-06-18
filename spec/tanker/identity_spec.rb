@@ -9,6 +9,7 @@ RSpec.describe Tanker::Identity do
     @app = test_app
     @user_id = 'b_eich'
     @user_email = 'brendan.eich@tanker.io'
+    @user_phone = '+33611223344'
     @hashed_email = '0u2c8w8EIZWT2FzRN/yyM5qIbEGYTNDT5SkWVBu20Qo='
     @hashed_user_id = 'RDa0eq4XNuj5tV7hdapjOxhmheTh4QBDNpy4Svy9Xok='
     @permanent_identity = 'eyJ0cnVzdGNoYWluX2lkIjoidHBveHlOemgwaFU5RzJpOWFnTXZIeXlkK3BPNnpHQ2pPOUJmaHJDTGpkND0iLCJ0YXJnZXQiOiJ1c2VyIiwidmFsdWUiOiJSRGEwZXE0WE51ajV0VjdoZGFwak94aG1oZVRoNFFCRE5weTRTdnk5WG9rPSIsImRlbGVnYXRpb25fc2lnbmF0dXJlIjoiVTlXUW9sQ3ZSeWpUOG9SMlBRbWQxV1hOQ2kwcW1MMTJoTnJ0R2FiWVJFV2lyeTUya1d4MUFnWXprTHhINmdwbzNNaUE5cisremhubW9ZZEVKMCtKQ3c9PSIsImVwaGVtZXJhbF9wdWJsaWNfc2lnbmF0dXJlX2tleSI6IlhoM2kweERUcHIzSFh0QjJRNTE3UUt2M2F6TnpYTExYTWRKRFRTSDRiZDQ9IiwiZXBoZW1lcmFsX3ByaXZhdGVfc2lnbmF0dXJlX2tleSI6ImpFRFQ0d1FDYzFERndvZFhOUEhGQ2xuZFRQbkZ1Rm1YaEJ0K2lzS1U0WnBlSGVMVEVOT212Y2RlMEhaRG5YdEFxL2RyTTNOY3N0Y3gwa05OSWZodDNnPT0iLCJ1c2VyX3NlY3JldCI6IjdGU2YvbjBlNzZRVDNzMERrdmV0UlZWSmhYWkdFak94ajVFV0FGZXh2akk9In0='
@@ -223,8 +224,8 @@ RSpec.describe Tanker::Identity do
 
   describe 'permanent identity' do
     def assert_user_secret(identity)
-      hashed_user_id = Base64.decode64(@identity['value'])
-      user_secret = Base64.decode64(@identity['user_secret'])
+      hashed_user_id = Base64.decode64(identity['value'])
+      user_secret = Base64.decode64(identity['user_secret'])
       expect(hashed_user_id.bytesize).to be 32
       expect(user_secret.bytesize).to be 32
 
@@ -270,26 +271,55 @@ RSpec.describe Tanker::Identity do
 
   describe 'provisional identity' do
     before(:all) do
-      @b64_identity = Tanker::Identity.create_provisional_identity(@app[:id], 'email', @user_email)
-      @identity = Tanker::Identity.deserialize(@b64_identity)
+      @b64_email_identity = Tanker::Identity.create_provisional_identity(@app[:id], 'email', @user_email)
+      @b64_phone_number_identity = Tanker::Identity.create_provisional_identity(@app[:id], 'phone_number', @user_phone)
+      @email_identity = Tanker::Identity.deserialize(@b64_email_identity)
+      @phone_number_identity = Tanker::Identity.deserialize(@b64_phone_number_identity)
     end
 
-    it 'returns a provisional identity' do
-      expect(@identity.keys.sort).to eq ['private_encryption_key', 'private_signature_key', 'public_encryption_key', 'public_signature_key', 'target', 'trustchain_id', 'value']
-      expect(@identity['trustchain_id']).to eq @app[:id]
-      expect(@identity['target']).to eq 'email'
-      expect(@identity['value']).to eq @user_email
+    it 'cannot create a provisional identity with an invalid target' do
+      expect do
+        Tanker::Identity.create_provisional_identity(@app[:id], 'meme pas en rêve', 'whatever')
+      end.to raise_exception ArgumentError
+    end
+
+    it 'returns an email provisional identity' do
+      expect(@email_identity.keys.sort).to eq ['private_encryption_key', 'private_signature_key', 'public_encryption_key', 'public_signature_key', 'target', 'trustchain_id', 'value']
+      expect(@email_identity['trustchain_id']).to eq @app[:id]
+      expect(@email_identity['target']).to eq 'email'
+      expect(@email_identity['value']).to eq @user_email
     end
 
     it 'returns a public identity from a provisional identity' do
-      b64_public_identity = Tanker::Identity.get_public_identity(@b64_identity)
+      b64_public_identity = Tanker::Identity.get_public_identity(@b64_email_identity)
       public_identity = Tanker::Identity.deserialize(b64_public_identity)
       expect(public_identity.keys.sort).to eq ['public_encryption_key', 'public_signature_key', 'target', 'trustchain_id', 'value']
       expect(public_identity['trustchain_id']).to eq @app[:id]
       expect(public_identity['target']).to eq 'hashed_email'
       expect(public_identity['value']).to eq @hashed_email
-      expect(public_identity['public_encryption_key']).to eq @identity['public_encryption_key']
-      expect(public_identity['public_signature_key']).to eq @identity['public_signature_key']
+      expect(public_identity['public_encryption_key']).to eq @email_identity['public_encryption_key']
+      expect(public_identity['public_signature_key']).to eq @email_identity['public_signature_key']
+    end
+
+    it 'returns an SMS provisional identity' do
+      expect(@phone_number_identity.keys.sort).to eq ['private_encryption_key', 'private_signature_key', 'public_encryption_key', 'public_signature_key', 'target', 'trustchain_id', 'value']
+      expect(@phone_number_identity['trustchain_id']).to eq @app[:id]
+      expect(@phone_number_identity['target']).to eq 'phone_number'
+      expect(@phone_number_identity['value']).to eq @user_phone
+    end
+
+    it 'returns a public identity from a provisional identity' do
+      b64_public_identity = Tanker::Identity.get_public_identity(@b64_phone_number_identity)
+      public_identity = Tanker::Identity.deserialize(b64_public_identity)
+
+      hashed_phone = Tanker::Crypto.hashed_provisional_value(@user_phone, @phone_number_identity['private_signature_key'])
+
+      expect(public_identity.keys.sort).to eq ['public_encryption_key', 'public_signature_key', 'target', 'trustchain_id', 'value']
+      expect(public_identity['trustchain_id']).to eq @app[:id]
+      expect(public_identity['target']).to eq 'phone_number'
+      expect(public_identity['value']).to eq hashed_phone
+      expect(public_identity['public_encryption_key']).to eq @phone_number_identity['public_encryption_key']
+      expect(public_identity['public_signature_key']).to eq @phone_number_identity['public_signature_key']
     end
   end
 end
