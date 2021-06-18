@@ -117,9 +117,25 @@ module Tanker
       public_identity = {}
       public_keys.each { |key| public_identity[key] = identity.fetch(key) }
 
+      if identity['target'] == 'email'
+        identity['target'] = 'hashed_email'
+        public_identity['value'] = Base64.strict_encode64(Crypto.generichash(public_identity['value'], BLOCK_HASH_SIZE))
+      end
+
       serialize(public_identity)
     rescue KeyError # failed fetch
       raise ArgumentError.new('Not a valid Tanker identity')
+    end
+
+    def self.upgrade_identity(serialized_identity)
+      assert_string_values({ identity: serialized_identity })
+
+      identity = deserialize(serialized_identity)
+      if identity['target'] == 'email' && !identity.key?('private_encryption_key')
+        identity['target'] = 'hashed_email'
+        identity['value'] = Base64.strict_encode64(Crypto.generichash(identity['value'], BLOCK_HASH_SIZE))
+      end
+      serialize(identity)
     end
   end
 end
