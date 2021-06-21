@@ -1,0 +1,28 @@
+name: Deploy
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up Python
+        uses: actions/setup-python@v1 
+        with: 
+          python-version: 3.8
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+      - name: Install and configure poetry
+        run: python -m pip install poetry
+      - name: Install python packages
+        run: python -m poetry install --no-dev
+      - name: Configure rubygems permissions
+        run: mkdir -p "${HOME}/.gems" && echo ":rubygems_api_key: \"${RUBYGEMS_TOKEN}\"" > "${HOME}/.gems/credentials"
+        env:
+          RUBYGEMS_TOKEN: ${{ secrets.RUBYGEMS_TOKEN }}
+      - name: Deploy
+        run: python -m poetry run python run-ci.py deploy --version "${$(git describe --tags):1}"
