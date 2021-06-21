@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    tanker-identity (0.0.1)
+    tanker-identity (2.16.0.alpha.1)
       rbnacl (~> 7.0)
 
 GEM
