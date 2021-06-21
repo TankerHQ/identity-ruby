@@ -1,40 +1,47 @@
-from typing import Optional
 import argparse
-import os
 from pathlib import Path
+import subprocess
 import sys
 
-
-import tankerci
-import tankerci.git
-import tankerci.bump
+import tbump
+import tbump.config
 
 
-def build_and_test() -> None:
-    tankerci.run("bundle", "install")
-    tankerci.run("bundle", "exec", "rake", "spec")
+def version_from_git_tag(git_tag: str) -> str:
+    prefix = "v"
+    assert git_tag.startswith(prefix), "tag should start with %s" % prefix
+    cfg_file = tbump.config.get_config_file(Path.cwd())
+    tbump_cfg = cfg_file.get_config()
+    regex = tbump_cfg.version_regex
+    version = git_tag[len(prefix) :]  # noqa
+    match = regex.match(version)
+    assert match, "Could not parse %s as a valid tag" % git_tag
+    return version
 
 
 def deploy(version: str) -> None:
-    tankerci.bump.bump_files(version)
+    tbump.bump_files(version_from_git_tag(version))
 
     # Note: this commands also re-gerenates the lock as a side-effect since the
     # gemspec has changed - keep this before the git commands
-    tankerci.run("bundle", "install")
+    subprocess.run(["bundle", "install"], check=True)
 
     # Note: `bundle exec rake build` does not like dirty git repos, so make a
     # commit with the new changes first
-    tankerci.git.run(Path.cwd(), "add", "--update", ".")
-    tankerci.git.run(Path.cwd(), "commit", "--message", f"Bump to {version}")
-    tankerci.run("bundle", "exec", "rake", "build")
-    tankerci.run("bundle", "exec", "rake", "push")
+    subprocess.run(["git", "add", "--update", "."], cwd=Path.cwd(), check=True)
+    subprocess.run(
+        ["git", "commit", "--message", f"Bump to {version}"],
+        cwd=Path.cwd(),
+        check=True,
+    )
+
+    subprocess.run(["bundle", "exec", "rake", "build"], check=True)
+    subprocess.run(["bundle", "exec", "rake", "push"], check=True)
 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(title="subcommands", dest="command")
-
-    subparsers.add_parser("build-and-test")
 
     deploy_parser = subparsers.add_parser("deploy")
     deploy_parser.add_argument("--version", required=True)
@@ -42,9 +49,7 @@ def main() -> None:
     args = parser.parse_args()
     command = args.command
 
-    if command == "build-and-test":
-        build_and_test()
-    elif command == "deploy":
+    if command == "deploy":
         deploy(args.version)
     else:
         parser.print_help()
