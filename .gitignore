@@ -1,11 +1,17 @@
 /.bundle/
 /.yardoc
 /_yardoc/
+/bin/
 /coverage/
 /doc/
 /pkg/
 /spec/reports/
 /tmp/
+/vendor/
+.bundle/
+*.bundle
+*.gem
+.mypy_cache
 
 # rspec failure tracking
 .rspec_status
