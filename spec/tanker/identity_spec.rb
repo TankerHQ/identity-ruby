@@ -117,7 +117,7 @@ RSpec.describe Tanker::Identity do
   end
 
   describe 'parse' do
-    it 'a valid permanent identity' do
+    it 'parses a valid permanent identity' do
       identity = Tanker::Identity.deserialize(@permanent_identity)
 
       expect(identity['trustchain_id']).to eq(@app[:id])
@@ -129,7 +129,7 @@ RSpec.describe Tanker::Identity do
       expect(identity['user_secret']).to eq('7FSf/n0e76QT3s0DkvetRVVJhXZGEjOxj5EWAFexvjI=')
     end
 
-    it 'a valid provisional identity' do
+    it 'parses a valid provisional identity' do
       identity = Tanker::Identity.deserialize(@provisional_identity)
 
       expect(identity['trustchain_id']).to eq(@app[:id])
@@ -141,7 +141,7 @@ RSpec.describe Tanker::Identity do
       expect(identity['private_encryption_key']).to eq('4QB5TWmvcBrgeyDDLhULINU6tbqAOEQ8v9pjDkPcybA=')
     end
 
-    it 'a valid public identity' do
+    it 'parses a valid public identity' do
       identity = Tanker::Identity.deserialize(@public_identity)
 
       expect(identity['trustchain_id']).to eq(@app[:id])
@@ -149,7 +149,7 @@ RSpec.describe Tanker::Identity do
       expect(identity['value']).to eq(@hashed_user_id)
     end
 
-    it 'a valid non-hashed public provisional identity' do
+    it 'parses a valid non-hashed public provisional identity' do
       identity = Tanker::Identity.deserialize(@old_public_provisional_identity)
 
       expect(identity['trustchain_id']).to eq(@app[:id])
@@ -159,7 +159,7 @@ RSpec.describe Tanker::Identity do
       expect(identity['public_encryption_key']).to eq('/2j4dI3r8PlvCN3uW4HhA5wBtMKOcACd38K6N0q+mFU=')
     end
 
-    it 'a valid hashed public provisional identity' do
+    it 'parses a valid hashed public provisional identity' do
       identity = Tanker::Identity.deserialize(@public_provisional_identity)
 
       expect(identity['trustchain_id']).to eq(@app[:id])
@@ -169,7 +169,7 @@ RSpec.describe Tanker::Identity do
       expect(identity['public_encryption_key']).to eq('/2j4dI3r8PlvCN3uW4HhA5wBtMKOcACd38K6N0q+mFU=')
     end
 
-    it 'a valid sms provisional identity' do
+    it 'parses a valid sms provisional identity' do
       identity = Tanker::Identity.deserialize(@phone_number_provisional_identity)
 
       expect(identity['trustchain_id']).to eq(@app[:id])
@@ -181,7 +181,7 @@ RSpec.describe Tanker::Identity do
       expect(identity['private_encryption_key']).to eq('tVTS9nHxr2MdVuTR5clww0EXbwis8HixgPINbQJx1U4=')
     end
 
-    it 'a valid sms public provisional identity' do
+    it 'parses a valid sms public provisional identity' do
       private_identity = Tanker::Identity.deserialize(@phone_number_provisional_identity)
       identity = Tanker::Identity.deserialize(@phone_number_public_provisional_identity)
       expect(Tanker::Identity.get_public_identity(@phone_number_provisional_identity)).to eq(@phone_number_public_provisional_identity)
