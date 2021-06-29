@@ -119,6 +119,7 @@ module Tanker
         public_identity['target'] = 'hashed_email'
         public_identity['value'] = Crypto.hashed_provisional_email(public_identity['value'])
       elsif identity['target'] != 'user'
+        public_identity['target'] = 'hashed_' + public_identity['target']
         public_identity['value'] = Crypto.hashed_provisional_value(public_identity['value'],
                                                                    identity['private_signature_key'])
       end
