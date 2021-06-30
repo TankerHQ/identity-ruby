@@ -169,7 +169,7 @@ RSpec.describe Tanker::Identity do
       expect(identity['public_encryption_key']).to eq('/2j4dI3r8PlvCN3uW4HhA5wBtMKOcACd38K6N0q+mFU=')
     end
 
-    it 'parses a valid sms provisional identity' do
+    it 'parses a valid phone_number provisional identity' do
       identity = Tanker::Identity.deserialize(@phone_number_provisional_identity)
 
       expect(identity['trustchain_id']).to eq(@app[:id])
@@ -181,7 +181,7 @@ RSpec.describe Tanker::Identity do
       expect(identity['private_encryption_key']).to eq('tVTS9nHxr2MdVuTR5clww0EXbwis8HixgPINbQJx1U4=')
     end
 
-    it 'parses a valid sms public provisional identity' do
+    it 'parses a valid phone_number public provisional identity' do
       private_identity = Tanker::Identity.deserialize(@phone_number_provisional_identity)
       identity = Tanker::Identity.deserialize(@phone_number_public_provisional_identity)
       expect(Tanker::Identity.get_public_identity(@phone_number_provisional_identity)).to eq(@phone_number_public_provisional_identity)
@@ -329,7 +329,7 @@ RSpec.describe Tanker::Identity do
       expect(public_identity['public_signature_key']).to eq @email_identity['public_signature_key']
     end
 
-    it 'returns an SMS provisional identity' do
+    it 'returns a phone_number provisional identity' do
       expect(@phone_number_identity.keys.sort).to eq ['private_encryption_key', 'private_signature_key', 'public_encryption_key', 'public_signature_key', 'target', 'trustchain_id', 'value']
       expect(@phone_number_identity['trustchain_id']).to eq @app[:id]
       expect(@phone_number_identity['target']).to eq 'phone_number'
