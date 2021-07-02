@@ -22,4 +22,4 @@ jobs:
         run: |
           bundle init
           bundle add tanker-identity --git https://github.com/TankerHQ/identity-ruby
-          bundle exec ruby -e "require 'tanker-identity'; Tanker::Identity.create_provisional_identity('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=', 'test@tanker.io')"
+          bundle exec ruby -e "require 'tanker-identity'; Tanker::Identity.create_provisional_identity('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=', 'email', 'test@tanker.io')"

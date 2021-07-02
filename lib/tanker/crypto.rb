@@ -7,10 +7,25 @@ module Tanker
     class InvalidSignature < StandardError; end
 
     HASH_MIN_SIZE = RbNaCl::Hash::Blake2b::BYTES_MIN # 16
+    BLOCK_HASH_SIZE = 32
 
     def self.generichash(input, size)
       binary_input = input.dup.force_encoding(Encoding::ASCII_8BIT)
       RbNaCl::Hash.blake2b(binary_input, digest_size: size)
+    end
+
+    def self.hash_user_id(app_id, user_id)
+      binary_user_id = user_id.dup.force_encoding(Encoding::ASCII_8BIT)
+      Crypto.generichash(binary_user_id + app_id, BLOCK_HASH_SIZE)
+    end
+
+    def self.hashed_provisional_email(email)
+      Base64.strict_encode64(Crypto.generichash(email, BLOCK_HASH_SIZE))
+    end
+
+    def self.hashed_provisional_value(value, private_signature_key)
+      secret_salt = Crypto.generichash(Base64.strict_decode64(private_signature_key), BLOCK_HASH_SIZE)
+      Base64.strict_encode64(Crypto.generichash(secret_salt + value, BLOCK_HASH_SIZE))
     end
 
     # We need this static method since a RbNaCl::SigningKey instance can't be
