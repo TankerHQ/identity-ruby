@@ -48,7 +48,7 @@ The unique ID of a user in your application.
 <br><br>
 
 ```ruby
-Tanker::Identity.create_provisional_identity(app_id, email)
+Tanker::Identity.create_provisional_identity(app_id, 'email', email)
 ```
 Create a Tanker provisional identity. It allows you to share a resource with a user who does not have an account in your application yet.
 
