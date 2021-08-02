@@ -26,4 +26,4 @@ jobs:
         env:
           RUBYGEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
       - name: Deploy
-        run: python -m poetry run python run-ci.py deploy --version "$(git describe --tags)"
+        run: python -m poetry run python run-ci.py deploy --version "${GITHUB_REF#refs/tags/}"
