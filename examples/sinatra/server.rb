@@ -23,8 +23,10 @@ class Server < Sinatra::Base
     def db_load_identity(user_id); EXAMPLE_DB[user_id]&.fetch(:identity, nil); end
   end
 
-  # TODO: ensure config is stored in a secure place
   configure do
+    enable :logging
+
+    # TODO: ensure config is stored in a secure place
     set config: JSON.parse(File.read('config-app.json'))
   end
 
