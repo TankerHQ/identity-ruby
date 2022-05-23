@@ -31,7 +31,7 @@ class Server < Sinatra::Base
   end
 
   # TODO: use real auth mechanism
-  get '/authenticate/:user_id' do
+  post '/authenticate/:user_id' do
     db_upsert_user(params[:user_id])
     set_current_user(params[:user_id])
     200
