@@ -20,12 +20,12 @@ ruby config.ru
 Try some requests:
 
 ```bash
-curl -i -X GET http://127.0.0.1:4567/authenticate/alice
-curl -i -X GET http://127.0.0.1:4567/me/tanker_secret_identity
-curl -i -X GET http://127.0.0.1:4567/users/alice/tanker_public_identity
+curl -i -X GET http://localhost:4567/authenticate/alice
+curl -i -X GET http://localhost:4567/me/tanker_secret_identity
+curl -i -X GET http://localhost:4567/users/alice/tanker_public_identity
 
-curl -i -X GET http://127.0.0.1:4567/authenticate/bob
-curl -i -X GET http://127.0.0.1:4567/me/tanker_secret_identity
-curl -i -X GET http://127.0.0.1:4567/users/alice/tanker_public_identity
-curl -i -X GET http://127.0.0.1:4567/users/bob/tanker_public_identity
+curl -i -X GET http://localhost:4567/authenticate/bob
+curl -i -X GET http://localhost:4567/me/tanker_secret_identity
+curl -i -X GET http://localhost:4567/users/alice/tanker_public_identity
+curl -i -X GET http://localhost:4567/users/bob/tanker_public_identity
 ```
