@@ -32,5 +32,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec", "~> 3.0"
   spec.add_development_dependency 'rubygems-tasks', '~> 0.2.5'
   spec.add_development_dependency "simplecov"
-  spec.add_development_dependency "codecov"
+  spec.add_development_dependency "simplecov-cobertura"
 end

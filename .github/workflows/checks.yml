@@ -23,8 +23,8 @@ jobs:
         run: bundle exec bundle-audit check --update
       - name: Run tests
         run: bundle exec rspec
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
   lint:
     runs-on: ubuntu-latest
     steps:
