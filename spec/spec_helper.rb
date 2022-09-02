@@ -1,8 +1,8 @@
 require 'simplecov'
 SimpleCov.start
 
-require 'codecov'
-SimpleCov.formatter = SimpleCov::Formatter::Codecov
+require 'simplecov-cobertura'
+SimpleCov.formatter = SimpleCov::Formatter::CoberturaFormatter
 
 require 'bundler/setup'
 require 'tanker/identity'
