@@ -13,7 +13,7 @@ Gem::Specification.new do |spec|
   spec.description   = %q{Building blocks to add Tanker identity management to your application server}
   spec.homepage      = "https://tanker.io"
   spec.license       = "Apache-2.0"
-  spec.required_ruby_version = Gem::Requirement.new('>= 2.5.0')
+  spec.required_ruby_version = Gem::Requirement.new('>= 2.7.0')
 
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/TankerHQ/identity-ruby"
@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "rbnacl", "~> 7.0"
 
   spec.add_development_dependency "bundler", "~> 2.0"
-  spec.add_development_dependency "bundler-audit", "~> 0.7"
+  spec.add_development_dependency "bundler-audit", "~> 0.9"
   spec.add_development_dependency "rake", "~> 13.0"
   spec.add_development_dependency "rspec", "~> 3.0"
   spec.add_development_dependency 'rubygems-tasks', '~> 0.2.5'
