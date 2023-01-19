@@ -10,11 +10,11 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Set up Python
-        uses: actions/setup-python@v1 
-        with: 
+        uses: actions/setup-python@v1
+        with:
           python-version: '3.10'
       - name: Set up Ruby
-        uses: actions/setup-ruby@v1
+        uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.1'
       - name: Install and configure poetry
@@ -22,7 +22,7 @@ jobs:
       - name: Install python packages
         run: python -m poetry install --no-dev
       - name: Configure rubygems permissions
-        run: mkdir -p "${HOME}/.gem" && echo ':rubygems_api_key:'" \"${RUBYGEMS_API_KEY}\"" > "${HOME}/.gem/credentials" && chmod 0600 "${HOME}/.gem/credentials" 
+        run: mkdir -p "${HOME}/.gem" && echo ':rubygems_api_key:'" \"${RUBYGEMS_API_KEY}\"" > "${HOME}/.gem/credentials" && chmod 0600 "${HOME}/.gem/credentials"
         env:
           RUBYGEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
       - name: Deploy
