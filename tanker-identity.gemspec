@@ -7,11 +7,9 @@ Gem::Specification.new do |spec|
   spec.name          = "tanker-identity"
   spec.version       = Tanker::Identity::VERSION
   spec.authors       = ["Tanker Team"]
-  spec.email         = ["contact@tanker.io"]
 
   spec.summary       = %q{Tanker identity management library packaged as a gem}
   spec.description   = %q{Building blocks to add Tanker identity management to your application server}
-  spec.homepage      = "https://tanker.io"
   spec.license       = "Apache-2.0"
   spec.required_ruby_version = Gem::Requirement.new('>= 2.7.0')
 
