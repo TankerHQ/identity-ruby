@@ -38,10 +38,10 @@ Tanker::Identity.create_identity(app_id, app_secret, user_id)
 Create a new Tanker identity. This identity is secret and must only be given to a user who has been authenticated by your application. This identity is used by the Tanker client SDK to open a Tanker session.
 
 **app_id**<br>
-The app ID. You can access it from the [Tanker dashboard](https://dashboard.tanker.io).
+The app ID, must match the one used in the constructor of the Core SDK.
 
 **app_secret**<br>
-The app secret. A secret that you have saved right after the creation of your app on the [Tanker dashboard](https://dashboard.tanker.io).
+The app secret, secret that you have saved right after the creation of your app.
 
 **user_id**<br>
 The unique ID of a user in your application.
@@ -53,7 +53,7 @@ Tanker::Identity.create_provisional_identity(app_id, 'email', email)
 Create a Tanker provisional identity. It allows you to share a resource with a user who does not have an account in your application yet.
 
 **app_id**<br>
-The app ID. You can access it from the [Tanker dashboard](https://dashboard.tanker.io).
+The app ID, must match the one used in the constructor of the Core SDK.
 
 **email**<br>
 The email of the potential recipient of the resource.

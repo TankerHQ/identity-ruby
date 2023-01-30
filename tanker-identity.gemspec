@@ -4,18 +4,15 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require "tanker/identity/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "tanker-identity"
-  spec.version       = Tanker::Identity::VERSION
-  spec.authors       = ["Tanker Team"]
-  spec.email         = ["contact@tanker.io"]
+  spec.name        = "tanker-identity"
+  spec.version     = Tanker::Identity::VERSION
+  spec.authors     = ["Tanker Team"]
 
-  spec.summary       = %q{Tanker identity management library packaged as a gem}
-  spec.description   = %q{Building blocks to add Tanker identity management to your application server}
-  spec.homepage      = "https://tanker.io"
-  spec.license       = "Apache-2.0"
+  spec.summary     = %q{Tanker identity management library packaged as a gem}
+  spec.description = %q{Building blocks to add Tanker identity management to your application server}
+  spec.license     = "Apache-2.0"
   spec.required_ruby_version = Gem::Requirement.new('>= 2.7.0')
 
-  spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/TankerHQ/identity-ruby"
   spec.metadata["changelog_uri"] = "https://docs.tanker.io/latest/release-notes/identity/ruby"
 
