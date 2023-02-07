@@ -1,16 +1,14 @@
-<a href="#readme"><img src="https://tanker.io/images/github-logo.png" alt="Tanker logo" width="180" /></a>
-
-# Identity SDK
+<a href="#readme"><img src="https://raw.githubusercontent.com/TankerHQ/spec/master/img/tanker-logotype-blue-nomargin-350.png" alt="Tanker logo" width="175" /></a>
 
 [![Actions Status](https://github.com/TankerHQ/identity-ruby/workflows/Tests/badge.svg)](https://github.com/TankerHQ/identity-ruby/actions) [![codecov](https://codecov.io/gh/TankerHQ/identity-ruby/branch/master/graph/badge.svg)](https://codecov.io/gh/TankerHQ/identity-ruby)
+
+# Identity SDK
 
 Identity generation in Ruby for the [Tanker SDK](https://docs.tanker.io/latest/).
 
 ## Requirements
 
-This gem requires Ruby v2.5 or greater (transitive requirement from [rbnacl](https://github.com/crypto-rb/rbnacl)).
-
-Older Ruby versions are not supported.
+This gem requires Ruby v2.7 or greater. Older Ruby versions are not supported.
 
 ## Installation
 
@@ -24,7 +22,7 @@ Then, add this line to your application's Gemfile:
 gem 'tanker-identity', 'X.Y.Z'
 ```
 
-Finally, execute:
+Finally, run:
 
 ```shell
 bundle
