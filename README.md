@@ -1,6 +1,8 @@
 <a href="#readme"><img src="https://raw.githubusercontent.com/TankerHQ/spec/master/img/tanker-logotype-blue-nomargin-350.png" alt="Tanker logo" width="175" /></a>
 
-[![Actions Status](https://github.com/TankerHQ/identity-ruby/workflows/Tests/badge.svg)](https://github.com/TankerHQ/identity-ruby/actions) [![codecov](https://codecov.io/gh/TankerHQ/identity-ruby/branch/master/graph/badge.svg)](https://codecov.io/gh/TankerHQ/identity-ruby)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Actions Status](https://github.com/TankerHQ/identity-ruby/workflows/Tests/badge.svg)](https://github.com/TankerHQ/identity-ruby/actions)
+[![codecov](https://codecov.io/gh/TankerHQ/identity-ruby/branch/master/graph/badge.svg)](https://codecov.io/gh/TankerHQ/identity-ruby)
 
 # Identity SDK
 
