@@ -12,7 +12,7 @@ GEM
     ffi (1.15.5)
     mustermann (3.0.0)
       ruby2_keywords (~> 0.0.1)
-    rack (2.2.6.3)
+    rack (2.2.6.4)
     rack-protection (3.0.5)
       rack
     rbnacl (7.1.1)
