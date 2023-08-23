@@ -5,7 +5,7 @@ description = "Ruby Identity SDK for Tanker"
 authors = ["Tanker team"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.11"
 tbump = "6.9.0"
 
 [tool.poetry.dev-dependencies]
