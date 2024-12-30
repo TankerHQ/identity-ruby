@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.summary     = %q{Tanker identity management library packaged as a gem}
   spec.description = %q{Building blocks to add Tanker identity management to your application server}
   spec.license     = "Apache-2.0"
-  spec.required_ruby_version = Gem::Requirement.new('>= 3.1.0')
+  spec.required_ruby_version = Gem::Requirement.new('>= 3.2.0')
 
   spec.metadata["source_code_uri"] = "https://github.com/TankerHQ/identity-ruby"
   spec.metadata["changelog_uri"] = "https://docs.tanker.io/latest/release-notes/identity/ruby"
