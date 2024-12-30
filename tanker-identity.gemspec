@@ -21,8 +21,8 @@ Gem::Specification.new do |spec|
 
   spec.require_paths = ["lib"]
 
-  spec.add_runtime_dependency "base64", "~> 0.2.0"
-  spec.add_runtime_dependency "rbnacl", "~> 7.0"
+  spec.add_dependency "base64", "~> 0.2.0"
+  spec.add_dependency "rbnacl", "~> 7.0"
 
   spec.add_development_dependency "bundler", "~> 2.0"
   spec.add_development_dependency "bundler-audit", "~> 0.9"
